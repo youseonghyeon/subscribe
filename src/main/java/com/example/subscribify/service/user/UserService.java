@@ -2,6 +2,7 @@ package com.example.subscribify.service.user;
 
 import com.example.subscribify.dto.CreateUserDto;
 import com.example.subscribify.entity.User;
+import com.example.subscribify.exception.UserAlreadyExistsException;
 import com.example.subscribify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -82,4 +83,12 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    public void duplicateCheck(CreateUserDto createUserDto) {
+        if (userRepository.findByUsername(createUserDto.getUsername()).isPresent()) {
+            throw new UserAlreadyExistsException("이미 존재하는 아이디입니다.");
+        }
+        if (userRepository.findByEmail(createUserDto.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("이미 존재하는 이메일입니다.");
+        }
+    }
 }

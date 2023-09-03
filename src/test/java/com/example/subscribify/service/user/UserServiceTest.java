@@ -39,6 +39,7 @@ class UserServiceTest {
         equalUserTest(createUserDto, createdUser);
     }
 
+
     @Test
     @Transactional
     @DisplayName("사용자 조회 성공 케이스")
@@ -86,7 +87,7 @@ class UserServiceTest {
         assertTrue(deletedUser.isEmpty());
     }
 
-    private static CreateUserDto createMockCreateUserDto() {
+    private CreateUserDto createMockCreateUserDto() {
         return new CreateUserDto("username", "password", "email", "firstName",
                 "lastName", "address", "city", "state", "zip", "country");
     }
