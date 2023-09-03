@@ -86,7 +86,6 @@ class UserControllerTest {
 
         long userSize = userRepository.findAll().stream().filter(u -> u.getEmail().equals("email")).count();
         assertEquals(1, userSize);
-
     }
 
     private CreateUserDto createMockCreateUserDto(String username) {

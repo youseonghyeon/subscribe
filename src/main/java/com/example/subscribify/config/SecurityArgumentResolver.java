@@ -1,5 +1,6 @@
 package com.example.subscribify.config;
 
+import com.example.subscribify.domain.SessionUser;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.service.user.CustomUserDetails;
 import org.springframework.core.MethodParameter;

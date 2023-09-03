@@ -4,10 +4,8 @@ import com.example.subscribify.service.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,20 +26,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((auth) ->
-                auth
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().permitAll());
-        http.csrf(new Customizer<CsrfConfigurer<HttpSecurity>>() {
-            @Override
-            public void customize(CsrfConfigurer<HttpSecurity> httpSecurityCsrfConfigurer) {
-                httpSecurityCsrfConfigurer
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(new AntPathRequestMatcher("/**"));
-            }
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/**").permitAll()
+                .anyRequest().permitAll());
+
+        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/**")));
+
+        http.formLogin(httpSecurityFormLoginConfigurer -> {
+            httpSecurityFormLoginConfigurer.loginProcessingUrl("/login")
+                    .permitAll()
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/login?error=true")
+                    .usernameParameter("username")
+                    .passwordParameter("password");
         });
 
-        http.formLogin(Customizer.withDefaults());
+        http.logout(httpSecurityLogoutConfigurer -> {
+            httpSecurityLogoutConfigurer.addLogoutHandler((request, response, authentication) -> {
+                // TODO Session과 쿠키 삭제
+                System.out.println("SecurityConfig.filterChain.addLogoutHandler");
+            });
+        });
 
         http.userDetailsService(customUserDetailsService);
 

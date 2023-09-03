@@ -1,4 +1,4 @@
-package com.example.subscribify.config;
+package com.example.subscribify.domain;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,24 +1,21 @@
 package com.example.subscribify.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SubscriptionInfo extends BaseTimeEntity {
+public class CustomerSubscription extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
     private Long id;
-    private String productId;
-    private String productName;
+    private String subscribeName;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     @Enumerated(EnumType.STRING)
@@ -27,4 +24,5 @@ public class SubscriptionInfo extends BaseTimeEntity {
     private Double discountRate;
     @ManyToOne(fetch = FetchType.LAZY)
     private SubscribeUser subscribeUser;
+
 }
