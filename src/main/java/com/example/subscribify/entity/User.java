@@ -4,13 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,4 +27,14 @@ public class User extends BaseTimeEntity {
     private String state;
     private String zip;
     private String country;
+
+    public void update(String encodedPassword, String email, String address, String city, String state, String zip, String country) {
+        this.password = encodedPassword;
+        this.email = email;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.country = country;
+    }
 }

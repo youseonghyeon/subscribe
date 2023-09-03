@@ -30,11 +30,12 @@ class UserServiceTest {
     @Transactional
     @DisplayName("사용자 생성 성공 케이스")
     void createUserSuccessCase() {
+        //given
         CreateUserDto createUserDto = createMockCreateUserDto();
         Long userId = userService.createUser(createUserDto);
-
+        //when
         User createdUser = userRepository.findById(userId).orElseThrow(() -> new AssertionError("User should exist"));
-
+        //then
         equalUserTest(createUserDto, createdUser);
     }
 
@@ -65,8 +66,10 @@ class UserServiceTest {
         //then
         User updatedUser = userRepository.findById(userId).orElseThrow(() -> new AssertionError("User should exist"));
 
+        CreateUserDto expectedUpdatedUserInfo = new CreateUserDto("username", "password2", "email2", "firstName",
+                "lastName", "address2", "city2", "state2", "zip2", "country2");
         assertEquals(userId, updatedUser.getId());
-        equalUserTest(updateDto, updatedUser);
+        equalUserTest(expectedUpdatedUserInfo, updatedUser);
     }
 
     @Test
