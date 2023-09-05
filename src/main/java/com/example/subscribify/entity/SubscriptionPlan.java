@@ -26,7 +26,13 @@ public class SubscriptionPlan {
     private String discountType; // Percent, Fixed, None
     private Long discountedPrice;
 
-    public void update(CreateSubscribeDto createSubscribeDto) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void update(String subscribeName, Integer duration, String durationUnit, Long price, Double discount, String discountType, Long discountedPrice) {
+        this.subscribeName = subscribeName;
+        this.duration = duration;
+        this.durationUnit = durationUnit;
+        this.price = price;
+        this.discount = discount;
+        this.discountType = discountType;
+        this.discountedPrice = discountedPrice;
     }
 }

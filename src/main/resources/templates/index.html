@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>구독 서비스 플랫폼</title>
+</head>
+<body>
+<h1>구독 서비스 플랫폼</h1>
+
+<h2>구독 등록</h2>
+<button onclick="enrollPageRedirect()"> 클릭</button>
+<form th:action="@{/subscription/enroll}" method="get">
+    <button type="submit">Go to Current Page</button>
+</form>
+<!--<form th:action="@{/submit}" method="post">-->
+<!--    <label>Name:</label>-->
+<!--    <input type="text" th:field="*{name}" required><br>-->
+<!--    <label>Email:</label>-->
+<!--    <input type="email" th:field="*{email}" required><br>-->
+<!--    <button type="submit">Submit</button>-->
+<!--</form>-->
+
+<h2>구독 검색</h2>
+
+
+
+<ul>
+    <li th:each="plan : ${subscriptions}">
+        <span th:text="${plan}"></span>
+    </li>
+</ul>
+
+</body>
+<script>
+    const enrollPageRedirect = () => {
+        location.href = "/subscription/enroll";
+    }
+</script>
+</html>

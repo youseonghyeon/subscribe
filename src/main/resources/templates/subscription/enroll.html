@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>구독 서비스 등록</title>
+</head>
+<body>
+<h1>구독 서비스 등록</h1>
+<div>
+    <form th:action="@{/submit}" method="post">
+        <label>SubscribeName:</label>
+        <input type="text" th:field="${subscribe.getSubscribeName()}" required><br>
+        <label>Duration:</label>
+        <input type="date" th:field="${subscribe.getDuration()}" required><br>
+        <label>DurationUnit:</label>
+        <input type="text" th:field="${subscribe.getDurationUnit()()}" required><br>
+        <label>price:</label>
+        <input type="text" th:field="${subscribe.getPrice()()}" required><br>
+        <label>discount:</label>
+        <input type="text" th:field="${subscribe.getDiscount()}" required><br>
+        <label>DiscountType:</label>
+        <input type="text" th:field="${subscribe.getDiscountType()}" required><br>
+        <label>DiscountPrice:</label>
+        <input type="text" th:field="${subscribe.getDiscountedPrice()()}" required><br>
+
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+</body>
+<script>
+    const enrollPageRedirect = () => {
+        location.href = "/subscription/enroll";
+    }
+</script>
+</html>

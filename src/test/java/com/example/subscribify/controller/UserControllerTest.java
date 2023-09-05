@@ -84,17 +84,17 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(createMockCreateUserDto(username + "2")))
         ).andExpect(status().is4xxClientError());
 
-        long userSize = userRepository.findAll().stream().filter(u -> u.getEmail().equals("email")).count();
+        long userSize = userRepository.findAll().stream().filter(u -> u.getEmail().equals("email@naver.com")).count();
         assertEquals(1, userSize);
     }
 
     private CreateUserDto createMockCreateUserDto(String username) {
-        return new CreateUserDto(username, "password", "email", "firstName",
+        return new CreateUserDto(username, "password", "email@naver.com", "firstName",
                 "lastName", "address", "city", "state", "zip", "country");
     }
 
     private CreateUserDto createMockCreateUserDto() {
-        return new CreateUserDto("username", "password", "email", "firstName",
+        return new CreateUserDto("username", "password", "email@naver.com", "firstName",
                 "lastName", "address", "city", "state", "zip", "country");
     }
 }

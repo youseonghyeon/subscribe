@@ -22,7 +22,7 @@ class SubscriptionPlanServiceTest {
     @Test
     @Transactional
     @DisplayName("구독 Plan 생성 성공 케이스")
-    void createSubscribePlan() {
+    void createSubscribePlanSuccessCase() {
         //when
         CreateSubscribeDto subscribeDto = createTestPlanDto();
         Long planId = subscriptionPlanService.createSubscribePlan(subscribeDto);
@@ -34,7 +34,7 @@ class SubscriptionPlanServiceTest {
     @Test
     @Transactional
     @DisplayName("구독 Plan 수정 성공 케이스")
-    void updateSubscribePlan() {
+    void updateSubscribePlanSuccessCase() {
         //given
         CreateSubscribeDto subscribeDto = createTestPlanDto();
         Long planId = subscriptionPlanService.createSubscribePlan(subscribeDto);
@@ -60,7 +60,14 @@ class SubscriptionPlanServiceTest {
     @Test
     @Transactional
     @DisplayName("구독 Plan 삭제 성공 케이스")
-    void deleteSubscribePlan() {
+    void deleteSubscribePlanSuccessCase() {
+        //given
+        CreateSubscribeDto subscribeDto = createTestPlanDto();
+        Long planId = subscriptionPlanService.createSubscribePlan(subscribeDto);
+        //when
+        subscriptionPlanService.deleteSubscribePlan(planId);
+        //then
+        assertFalse(subscriptionPlanRepository.findById(planId).isPresent());
     }
 
     private CreateSubscribeDto createTestPlanDto() {

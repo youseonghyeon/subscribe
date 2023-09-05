@@ -36,15 +36,17 @@ public class SubscriptionPlanService {
      * 구독 Plan 수정
      *
      * @param id
-     * @param createSubscribeDto
+     * @param createSubscribeDto TODO 수정을 위한 DTO 생성
      * @return
      */
     @Transactional
-    public Long updateSubscribePlan(Long id, CreateSubscribeDto createSubscribeDto) {
+    public void updateSubscribePlan(Long id, CreateSubscribeDto createSubscribeDto) {
         SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid subscribe plan id"));
-        subscriptionPlan.update(createSubscribeDto);
-        return id;
+                .orElseThrow(() -> new IllegalArgumentException("Invalid subscription plan ID: " + id));
+
+        subscriptionPlan.update(createSubscribeDto.getSubscribeName(), createSubscribeDto.getDuration(),
+                createSubscribeDto.getDurationUnit(), createSubscribeDto.getPrice(), createSubscribeDto.getDiscount(),
+                createSubscribeDto.getDiscountType(), createSubscribeDto.getDiscountedPrice());
     }
 
     /**
@@ -54,6 +56,14 @@ public class SubscriptionPlanService {
      */
     public void deleteSubscribePlan(Long id) {
         subscriptionPlanRepository.deleteById(id);
+    }
+
+    /**
+     * 구독 Plan 조회
+     */
+    public SubscriptionPlan getSubscribePlan(Long id) {
+        return subscriptionPlanRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid subscription plan ID: " + id));
     }
 
 

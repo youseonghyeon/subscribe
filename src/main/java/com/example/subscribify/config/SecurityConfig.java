@@ -4,6 +4,7 @@ import com.example.subscribify.service.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,21 +35,22 @@ public class SecurityConfig {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/**")));
 
-        http.formLogin(httpSecurityFormLoginConfigurer -> {
-            httpSecurityFormLoginConfigurer.loginProcessingUrl("/login")
-                    .permitAll()
-                    .defaultSuccessUrl("/", true)
-                    .failureUrl("/login?error=true")
-                    .usernameParameter("username")
-                    .passwordParameter("password");
-        });
+//        http.formLogin(httpSecurityFormLoginConfigurer -> {
+//            httpSecurityFormLoginConfigurer.loginProcessingUrl("/login")
+//                    .permitAll()
+//                    .defaultSuccessUrl("/", true)
+//                    .failureUrl("/login?error=true")
+//                    .usernameParameter("username")
+//                    .passwordParameter("password");
+//        });
+        http.formLogin(Customizer.withDefaults());
 
-        http.logout(httpSecurityLogoutConfigurer -> {
-            httpSecurityLogoutConfigurer.addLogoutHandler((request, response, authentication) -> {
-                // TODO Session과 쿠키 삭제
-                System.out.println("SecurityConfig.filterChain.addLogoutHandler");
-            });
-        });
+//        http.logout(httpSecurityLogoutConfigurer -> {
+//            httpSecurityLogoutConfigurer.addLogoutHandler((request, response, authentication) -> {
+//                // TODO Session과 쿠키 삭제
+//                System.out.println("SecurityConfig.filterChain.addLogoutHandler");
+//            });
+//        });
 
         http.userDetailsService(customUserDetailsService);
 
