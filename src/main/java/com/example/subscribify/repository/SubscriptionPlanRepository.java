@@ -1,6 +1,5 @@
 package com.example.subscribify.repository;
 
-import com.example.subscribify.entity.CustomerSubscription;
 import com.example.subscribify.entity.SubscriptionPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 

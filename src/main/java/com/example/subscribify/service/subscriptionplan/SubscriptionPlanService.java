@@ -16,12 +16,12 @@ public class SubscriptionPlanService {
     /**
      * 구독 Plan 생성
      *
-     * @param createSubscribeDto
-     * @return
+     * @param createSubscribeDto 구독 Plan 생성을 위한 DTO
+     * @return 생성된 구독 Plan ID
      */
     public Long createSubscribePlan(CreateSubscribeDto createSubscribeDto) {
         SubscriptionPlan newPlan = SubscriptionPlan.builder()
-                .subscribeName(createSubscribeDto.getSubscribeName())
+                .planName(createSubscribeDto.getSubscribeName())
                 .duration(createSubscribeDto.getDuration())
                 .durationUnit(createSubscribeDto.getDurationUnit())
                 .price(createSubscribeDto.getPrice())
@@ -35,14 +35,13 @@ public class SubscriptionPlanService {
     /**
      * 구독 Plan 수정
      *
-     * @param id
+     * @param planId             수정할 Plan ID
      * @param createSubscribeDto TODO 수정을 위한 DTO 생성
-     * @return
      */
     @Transactional
-    public void updateSubscribePlan(Long id, CreateSubscribeDto createSubscribeDto) {
-        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid subscription plan ID: " + id));
+    public void updateSubscribePlan(Long planId, CreateSubscribeDto createSubscribeDto) {
+        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid subscription plan ID: " + planId));
 
         subscriptionPlan.update(createSubscribeDto.getSubscribeName(), createSubscribeDto.getDuration(),
                 createSubscribeDto.getDurationUnit(), createSubscribeDto.getPrice(), createSubscribeDto.getDiscount(),

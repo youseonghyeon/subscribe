@@ -1,6 +1,8 @@
 package com.example.subscribify.service.subscriptionplan;
 
 import com.example.subscribify.dto.CreateSubscribeDto;
+import com.example.subscribify.entity.DiscountUnit;
+import com.example.subscribify.entity.DurationUnit;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -39,8 +41,8 @@ class SubscriptionPlanServiceTest {
         CreateSubscribeDto subscribeDto = createTestPlanDto();
         Long planId = subscriptionPlanService.createSubscribePlan(subscribeDto);
 
-        CreateSubscribeDto updatePlan = new CreateSubscribeDto("product plan", 2, "year",
-                50000L, 0D, "none", 50000L);
+        CreateSubscribeDto updatePlan = new CreateSubscribeDto("product plan", 2, DurationUnit.MONTH,
+                50000L, 0D, DiscountUnit.NONE, 50000L);
 
         //when
         subscriptionPlanService.updateSubscribePlan(planId, updatePlan);
@@ -48,7 +50,7 @@ class SubscriptionPlanServiceTest {
         //then
         SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
                 .orElseThrow(() -> new AssertionError("Plan should exist"));
-        assertEquals(updatePlan.getSubscribeName(), subscriptionPlan.getSubscribeName());
+        assertEquals(updatePlan.getSubscribeName(), subscriptionPlan.getPlanName());
         assertEquals(updatePlan.getDuration(), subscriptionPlan.getDuration());
         assertEquals(updatePlan.getDurationUnit(), subscriptionPlan.getDurationUnit());
         assertEquals(updatePlan.getPrice(), subscriptionPlan.getPrice());
@@ -71,7 +73,7 @@ class SubscriptionPlanServiceTest {
     }
 
     private CreateSubscribeDto createTestPlanDto() {
-        return new CreateSubscribeDto("test plan", 1, "month",
-                10000L, 0D, "none", 10000L);
+        return new CreateSubscribeDto("test plan", 1, DurationUnit.MONTH,
+                10000L, 0D, DiscountUnit.NONE, 10000L);
     }
 }
