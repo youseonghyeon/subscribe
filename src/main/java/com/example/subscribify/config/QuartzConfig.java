@@ -11,5 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class QuartzConfig {
 
+    // TODO 결제날이 도래한 구독을 찾아서 결제를 진행하는 Job 을 생성
+    // TODO 해당 로직은 결제날 이면서, SubscriptionStatus 가 ACTIVE 인 구독을 찾아서 결제를 진행
+
 
 }

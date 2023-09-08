@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Payments extends BaseTimeEntity {
+public class Payment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue

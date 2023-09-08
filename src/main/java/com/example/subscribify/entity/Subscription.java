@@ -18,6 +18,7 @@ public class Subscription extends BaseTimeEntity {
     private String subscribeName;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private Integer durationMonth;
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus status;
     private Long price;
@@ -51,5 +52,11 @@ public class Subscription extends BaseTimeEntity {
     // TODO Cancel Option 을 추가하여 남은 기간에 대한 처리를 해야 함
     public void cancel() {
         this.status = SubscriptionStatus.CANCELED;
+    }
+
+    public void start() {
+        this.status = SubscriptionStatus.ACTIVE;
+        this.startDate = LocalDateTime.now();
+        this.endDate = LocalDateTime.now().plusMonths(this.durationMonth);
     }
 }

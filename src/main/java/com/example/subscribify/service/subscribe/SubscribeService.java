@@ -36,6 +36,7 @@ public class SubscribeService {
                 .subscribeName(subscriptionPlan.getPlanName())
                 .status(SubscriptionStatus.PENDING)
                 .price(subscriptionPlan.getPrice())
+                .durationMonth(subscriptionPlan.getDuration())
                 .discountedPrice(subscriptionPlan.getDiscountedPrice())
                 .customer(buyer)
                 .build();
