@@ -61,13 +61,13 @@ class UserServiceTest {
         CreateUserDto createUserDto = createMockCreateUserDto();
         Long userId = userService.createUser(createUserDto);
         //when
-        CreateUserDto updateDto = new CreateUserDto("username2", "password2", "email2", "firstName2",
+        CreateUserDto updateDto = new CreateUserDto("username2", "password2", "password2", "email2", "firstName2",
                 "lastName2", "address2", "city2", "state2", "zip2", "country2");
         userService.updateUser(userId, updateDto);
         //then
         User updatedUser = userRepository.findById(userId).orElseThrow(() -> new AssertionError("User should exist"));
 
-        CreateUserDto expectedUpdatedUserInfo = new CreateUserDto("username", "password2", "email2", "firstName",
+        CreateUserDto expectedUpdatedUserInfo = new CreateUserDto("username", "password2", "password2", "email2", "firstName",
                 "lastName", "address2", "city2", "state2", "zip2", "country2");
         assertEquals(userId, updatedUser.getId());
         equalUserTest(expectedUpdatedUserInfo, updatedUser);
@@ -88,7 +88,7 @@ class UserServiceTest {
     }
 
     private CreateUserDto createMockCreateUserDto() {
-        return new CreateUserDto("username", "password", "email", "firstName",
+        return new CreateUserDto("username", "password", "password", "email", "firstName",
                 "lastName", "address", "city", "state", "zip", "country");
     }
 

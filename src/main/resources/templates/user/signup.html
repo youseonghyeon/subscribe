@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{layout:: globalHead}">
+    <title>회원가입</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>Sign Up</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/signup}" th:object="${user}" method="post">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{email}">Email</label>
+                            <input type="email" class="form-control" th:field="*{email}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{password}">Password</label>
+                            <input type="password" class="form-control" th:field="*{password}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{passwordConfirm}">Confirm Password</label>
+                            <input type="password" class="form-control" th:field="*{passwordConfirm}" required>
+                        </div>
+                        <!-- Additional fields based on your model -->
+                        <div class="form-group">
+                            <label th:for="*{firstName}">First Name</label>
+                            <input type="text" class="form-control" th:field="*{firstName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{lastName}">Last Name</label>
+                            <input type="text" class="form-control" th:field="*{lastName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{address}">Address</label>
+                            <input type="text" class="form-control" th:field="*{address}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{city}">City</label>
+                            <input type="text" class="form-control" th:field="*{city}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{state}">State</label>
+                            <input type="text" class="form-control" th:field="*{state}">
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{zip}">Zip</label>
+                            <input type="text" class="form-control" th:field="*{zip}" required>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="*{country}">Country</label>
+                            <input type="text" class="form-control" th:field="*{country}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small>Already have an account? <a href="/login">Login</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

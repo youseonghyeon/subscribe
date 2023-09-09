@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,22 +29,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll()
-                .anyRequest().permitAll());
+                .requestMatchers("/login", "/", "/signup").permitAll()
+                .anyRequest().authenticated());
 
-        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers(new AntPathRequestMatcher("/**")));
+        http.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .permitAll()
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
+                .usernameParameter("username")
+                .passwordParameter("password"));
 
-//        http.formLogin(httpSecurityFormLoginConfigurer -> {
-//            httpSecurityFormLoginConfigurer.loginProcessingUrl("/login")
-//                    .permitAll()
-//                    .defaultSuccessUrl("/", true)
-//                    .failureUrl("/login?error=true")
-//                    .usernameParameter("username")
-//                    .passwordParameter("password");
-//        });
-        http.formLogin(Customizer.withDefaults());
+
 
 //        http.logout(httpSecurityLogoutConfigurer -> {
 //            httpSecurityLogoutConfigurer.addLogoutHandler((request, response, authentication) -> {

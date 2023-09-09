@@ -89,12 +89,12 @@ class UserControllerTest {
     }
 
     private CreateUserDto createMockCreateUserDto(String username) {
-        return new CreateUserDto(username, "password", "email@naver.com", "firstName",
+        return new CreateUserDto(username, "password", "password", "email@naver.com", "firstName",
                 "lastName", "address", "city", "state", "zip", "country");
     }
 
     private CreateUserDto createMockCreateUserDto() {
-        return new CreateUserDto("username", "password", "email@naver.com", "firstName",
+        return new CreateUserDto("username", "password", "password", "email@naver.com", "firstName",
                 "lastName", "address", "city", "state", "zip", "country");
     }
 }
