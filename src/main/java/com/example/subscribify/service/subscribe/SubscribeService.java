@@ -44,6 +44,13 @@ public class SubscribeService {
         return subscriptionRepository.save(subscription).getId();
     }
 
+    @Transactional
+    public void activateSubscribe(Long subscriptionId) {
+        Subscription subscription = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> new IllegalStateException("Invalid customer subscription ID: " + subscriptionId));
+        subscription.start();
+    }
+
 
     /**
      * 구독 서비스 취소, 결제는 별도의 서비스로 분리

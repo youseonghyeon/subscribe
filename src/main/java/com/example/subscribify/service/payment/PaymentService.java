@@ -1,10 +1,10 @@
 package com.example.subscribify.service.payment;
 
-import com.example.subscribify.entity.PaymentStatus;
+import com.example.subscribify.dto.PaymentDto;
 import com.example.subscribify.entity.Payment;
-import com.example.subscribify.entity.Subscription;
+import com.example.subscribify.entity.PaymentStatus;
 import com.example.subscribify.repository.PaymentRepository;
-import com.example.subscribify.repository.SubscriptionRepository;
+import com.example.subscribify.service.subscribe.SubscribeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,24 +13,25 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final SubscriptionRepository subscriptionRepository;
     private final PaymentRepository paymentRepository;
+    private final SubscribeService subscribeService;
 
     /**
      * 결제 서비스
      */
     @Transactional
-    public void payment(Long subscriptionId, Payment payment) {
-        Subscription subscription = subscriptionRepository.findById(subscriptionId)
-                .orElseThrow(() -> new IllegalStateException("Invalid subscription ID: " + subscriptionId));
-
-        assert (payment.getUserId().equals(subscription.getCustomer().getCustomerId()));
-
-        if (PaymentStatus.COMPLETED.equals(payment.getStatus())) {
-            subscription.start();
-        }
-
+    public void completePayment(Long subscriptionId, PaymentDto paymentDto) {
+        Payment payment = Payment.builder()
+                .transactionId(paymentDto.getTransactionId())
+                .userId(paymentDto.getUserId())
+                .productId(paymentDto.getProductId())
+                .amount(paymentDto.getAmount())
+                .status(paymentDto.getStatus())
+                .build();
         paymentRepository.save(payment);
+        if (PaymentStatus.COMPLETED.equals(payment.getStatus())) {
+            subscribeService.activateSubscribe(subscriptionId);
+        }
     }
 
     /**

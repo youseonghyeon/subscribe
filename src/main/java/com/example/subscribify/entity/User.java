@@ -1,10 +1,9 @@
 package com.example.subscribify.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +26,9 @@ public class User extends BaseTimeEntity {
     private String state;
     private String zip;
     private String country;
+
+    @OneToMany(mappedBy = "user")
+    private List<SubscriptionPlan> enrolledPlan;
 
     public void update(String encodedPassword, String email, String address, String city, String state, String zip, String country) {
         this.password = encodedPassword;

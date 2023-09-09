@@ -1,8 +1,6 @@
 package com.example.subscribify.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -10,7 +8,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SubscriptionPlan {
+public class SubscriptionPlan extends BaseTimeEntity{
 
     @Id
     @GeneratedValue
@@ -22,6 +20,8 @@ public class SubscriptionPlan {
     private Double discount;
     private DiscountUnit discountType; // Percent, Fixed, None
     private Long discountedPrice;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     public void update(String subscribeName, Integer duration, DurationUnit durationUnit, Long price, Double discount, DiscountUnit discountType, Long discountedPrice) {
         this.planName = subscribeName;

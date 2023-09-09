@@ -16,6 +16,8 @@ public class Payment extends BaseTimeEntity {
     @GeneratedValue
     private Long id;
 
+    private String transactionId;
+
     private String userId;
 
     private String productId;

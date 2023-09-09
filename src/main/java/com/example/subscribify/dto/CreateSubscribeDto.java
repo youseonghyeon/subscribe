@@ -2,15 +2,12 @@ package com.example.subscribify.dto;
 
 import com.example.subscribify.entity.DiscountUnit;
 import com.example.subscribify.entity.DurationUnit;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class CreateSubscribeDto {
 
     private String subscribeName;

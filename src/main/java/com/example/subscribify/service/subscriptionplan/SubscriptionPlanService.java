@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SubscriptionPlanService {
@@ -65,5 +67,17 @@ public class SubscriptionPlanService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid subscription plan ID: " + id));
     }
 
+    /**
+     * 구독 Plan 전체 조회
+     */
+    public List<SubscriptionPlan> getAllSubscribePlan() {
+        return subscriptionPlanRepository.findAll();
+    }
 
+    /**
+     * 나의 구독 Plan 조회
+     */
+    public List<SubscriptionPlan> getMySubscribePlan(Long userId) {
+        return subscriptionPlanRepository.findByUserId(userId);
+    }
 }

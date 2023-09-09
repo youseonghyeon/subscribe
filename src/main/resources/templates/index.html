@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="layout :: globalHead">
     <title>구독 서비스 플랫폼</title>
 </head>
 <body>
-<h1>구독 서비스 플랫폼</h1>
 
-<h2>구독 등록</h2>
-<button onclick="enrollPageRedirect()"> 클릭</button>
-<form th:action="@{/subscription/enroll}" method="get">
-    <button type="submit">Go to Current Page</button>
-</form>
-<!--<form th:action="@{/submit}" method="post">-->
-<!--    <label>Name:</label>-->
-<!--    <input type="text" th:field="*{name}" required><br>-->
-<!--    <label>Email:</label>-->
-<!--    <input type="email" th:field="*{email}" required><br>-->
-<!--    <button type="submit">Submit</button>-->
-<!--</form>-->
+<div th:replace="common :: header"></div>
 
-<h2>구독 검색</h2>
+<div class="container mt-5">
+    <h1 class="mb-4">구독 서비스 플랫폼</h1>
+
+    <section class="mb-5">
+        <h2>구독 플랜 등록</h2>
+        <div class="d-flex mt-2">
+            <button class="btn btn-primary mr-2" onclick="enrollPageRedirect()">구독 생성하기</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>My Page</h2>
+    </section>
+</div>
+
+<div class="input-group">
+    <!-- 자연수 입력 필드 -->
+    <input type="number" class="form-control" placeholder="기간 입력" min="1" step="1">
+
+    <!-- 년/월 선택 드롭다운 -->
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">선택</button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="#">년</a>
+            <a class="dropdown-item" href="#">월</a>
+        </div>
+    </div>
+</div>
 
 
-
-<ul>
-    <li th:each="plan : ${subscriptions}">
-        <span th:text="${plan}"></span>
-    </li>
-</ul>
-
-</body>
 <script>
     const enrollPageRedirect = () => {
         location.href = "/subscription/enroll";
     }
 </script>
+
+</body>
 </html>
