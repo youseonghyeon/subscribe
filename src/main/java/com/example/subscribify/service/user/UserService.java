@@ -83,12 +83,17 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public void duplicateCheck(CreateUserDto createUserDto) {
-        if (userRepository.findByUsername(createUserDto.getUsername()).isPresent()) {
-            throw new UserAlreadyExistsException("이미 존재하는 아이디입니다.");
-        }
-        if (userRepository.findByEmail(createUserDto.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("이미 존재하는 이메일입니다.");
-        }
+
+    public boolean isUserUnique(CreateUserDto createUserDto) {
+        return !isUsernameTaken(createUserDto.getUsername()) && !isEmailTaken(createUserDto.getEmail());
     }
+
+    private boolean isUsernameTaken(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
+    private boolean isEmailTaken(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
 }

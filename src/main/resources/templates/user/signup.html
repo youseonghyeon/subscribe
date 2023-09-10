@@ -12,7 +12,7 @@
                     <h4>Sign Up</h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/signup}" th:object="${user}" method="post">
+                    <form th:action="@{/signup}" th:object="${createUserDto}" method="post">
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" th:field="*{username}" required>
@@ -27,6 +27,7 @@
                         </div>
                         <div class="form-group">
                             <label th:for="*{passwordConfirm}">Confirm Password</label>
+                            <span th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" style="color: red">passwordConfirm Error</span>
                             <input type="password" class="form-control" th:field="*{passwordConfirm}" required>
                         </div>
                         <!-- Additional fields based on your model -->

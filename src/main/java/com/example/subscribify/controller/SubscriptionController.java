@@ -1,9 +1,11 @@
 package com.example.subscribify.controller;
 
+import com.example.subscribify.domain.SessionUser;
 import com.example.subscribify.dto.CreateSubscribeDto;
 import com.example.subscribify.entity.DiscountUnit;
 import com.example.subscribify.entity.DurationUnit;
 import com.example.subscribify.entity.SubscriptionPlan;
+import com.example.subscribify.entity.User;
 import com.example.subscribify.service.subscriptionplan.SubscriptionPlanService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +29,15 @@ public class SubscriptionController {
     @GetMapping("/subscription/enroll")
     public String enrollSubscriptionForm(Model model) {
         // 테스트를 위한 더미 데이터
+        model.addAttribute("subscribe", mockSubscription());
+
+//        model.addAttribute("subscribe", new CreateSubscribeDto());
+        return "subscription/enroll";
+    }
+
+    private static CreateSubscribeDto mockSubscription() {
         String nowTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        model.addAttribute("subscribe", new CreateSubscribeDto(
+        return new CreateSubscribeDto(
                 "테스트 구독 상품" + nowTime,
                 1,
                 DurationUnit.MONTH,
@@ -36,10 +45,7 @@ public class SubscriptionController {
                 0D,
                 DiscountUnit.NONE,
                 49000L
-        ));
-
-//        model.addAttribute("subscribe", new CreateSubscribeDto());
-        return "subscription/enroll";
+        );
     }
 
     @PostMapping
@@ -67,6 +73,19 @@ public class SubscriptionController {
     public String subscriptionList(Model model) {
         model.addAttribute("plans", subscriptionPlanService.getAllSubscribePlan());
         return "subscription/list";
+    }
+
+    @GetMapping("subscription/update/{planId}")
+    public String subscriptionUpdateForm(Model model, @PathVariable Long planId) {
+        SubscriptionPlan subscribePlan = subscriptionPlanService.getSubscribePlan(planId);
+        model.addAttribute("plan", subscribePlan);
+        return "subscription/update";
+    }
+
+    @PostMapping("subscription/update/{planId}")
+    public String subscriptionUpdate(@ModelAttribute CreateSubscribeDto createSubscribeDto, @PathVariable Long planId) {
+        subscriptionPlanService.updateSubscribePlan(planId, createSubscribeDto);
+        return "redirect:/subscription/" + planId;
     }
 
 
