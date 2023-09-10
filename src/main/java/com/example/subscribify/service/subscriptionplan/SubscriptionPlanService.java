@@ -1,7 +1,9 @@
 package com.example.subscribify.service.subscriptionplan;
 
 import com.example.subscribify.dto.CreateSubscribeDto;
+import com.example.subscribify.dto.UpdateSubscribeDto;
 import com.example.subscribify.entity.SubscriptionPlan;
+import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.service.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class SubscriptionPlanService {
      * @param createSubscribeDto 구독 Plan 생성을 위한 DTO
      * @return 생성된 구독 Plan ID
      */
-    public Long createSubscribePlan(CreateSubscribeDto createSubscribeDto) {
+    public Long createSubscribePlan(CreateSubscribeDto createSubscribeDto, User createUser) {
         SubscriptionPlan newPlan = SubscriptionPlan.builder()
                 .planName(createSubscribeDto.getSubscribeName())
                 .duration(createSubscribeDto.getDuration())
@@ -36,6 +38,7 @@ public class SubscriptionPlanService {
                 .discount(createSubscribeDto.getDiscount())
                 .discountType(createSubscribeDto.getDiscountType())
                 .discountedPrice(createSubscribeDto.getDiscountedPrice())
+                .user(createUser)
                 .build();
         return subscriptionPlanRepository.save(newPlan).getId();
     }
@@ -44,18 +47,18 @@ public class SubscriptionPlanService {
      * 구독 Plan 수정
      *
      * @param planId             수정할 Plan ID
-     * @param createSubscribeDto TODO 수정을 위한 DTO 생성
+     * @param updateSubscribeDto TODO 수정을 위한 DTO 생성
      */
     @Transactional
-    public void updateSubscribePlan(Long planId, CreateSubscribeDto createSubscribeDto) {
+    public void updateSubscribePlan(Long planId, UpdateSubscribeDto updateSubscribeDto) {
         SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid subscription plan ID: " + planId));
 
         checkUserAuthorization(subscriptionPlan.getUser().getId());
 
-        subscriptionPlan.update(createSubscribeDto.getSubscribeName(), createSubscribeDto.getDuration(),
-                createSubscribeDto.getDurationUnit(), createSubscribeDto.getPrice(), createSubscribeDto.getDiscount(),
-                createSubscribeDto.getDiscountType(), createSubscribeDto.getDiscountedPrice());
+        subscriptionPlan.update(updateSubscribeDto.getSubscribeName(), updateSubscribeDto.getDuration(),
+                updateSubscribeDto.getDurationUnit(), updateSubscribeDto.getPrice(), updateSubscribeDto.getDiscount(),
+                updateSubscribeDto.getDiscountType(), updateSubscribeDto.getDiscountedPrice());
     }
 
 
@@ -90,8 +93,8 @@ public class SubscriptionPlanService {
     /**
      * 나의 구독 Plan 조회
      */
-    public List<SubscriptionPlan> getMySubscribePlan(Long userId) {
-        return subscriptionPlanRepository.findByUserId(userId);
+    public List<SubscriptionPlan> getMySubscribePlan(User user) {
+        return subscriptionPlanRepository.findByUser(user);
     }
 
 

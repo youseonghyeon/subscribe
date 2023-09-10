@@ -14,21 +14,66 @@
 
     <div class="card mb-3">
         <div class="card-body">
-            <h5 class="card-title" th:text="${plan.planName}"></h5>
-            <p class="card-text">
-                <strong>기간:</strong> <span th:text="${plan.duration}"></span><br>
-                <strong>기간 단위:</strong> <span th:text="${plan.durationUnit}"></span><br>
-                <strong>가격:</strong> <span th:text="${plan.price}"></span><br>
-                <strong>할인:</strong> <span th:text="${plan.discount}"></span><br>
-                <strong>할인 유형:</strong> <span th:text="${plan.discountType}"></span><br>
-                <strong>할인된 가격:</strong> <span th:text="${plan.discountedPrice}"></span>
-            </p>
-            <a th:href="@{/subscription/update/{planId}(planId=${plan.id})}" class="btn btn-primary">수정</a>
-            <a th:href="@{/subscription/delete/{planId}(planId=${plan.id})}" class="btn btn-danger">삭제</a>
+            <form th:action="@{/subscription/update/{planId}(planId=${updateSubscribeDto.id})}" method="post" th:object="${updateSubscribeDto}">
+
+                <input type="hidden" class="form-control" id="id" th:field="*{id}" required>
+                <div class="form-group">
+                    <label for="planName">Plan Name:</label>
+                    <input type="text" class="form-control" id="planName" th:field="*{subscribeName}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">기간:</label>
+                    <input type="text" class="form-control" id="duration" th:field="*{duration}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="durationUnit">기간 단위:</label>
+                    <select class="form-control" id="durationUnit" th:field="*{durationUnit}" required>
+                        <option th:each="unit : ${T(com.example.subscribify.entity.DurationUnit).values()}"
+                                th:value="${unit}"
+                                th:text="${unit.name()}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">가격:</label>
+                    <input type="text" class="form-control" id="price" th:field="*{price}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="discount">할인:</label>
+                    <input type="text" class="form-control" id="discount" th:field="*{discount}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="discountType">할인 유형:</label>
+                    <input type="text" class="form-control" id="discountType" th:field="*{discountType}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="discountedPrice">할인된 가격:</label>
+                    <input type="text" class="form-control" id="discountedPrice" th:field="*{discountedPrice}" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" onclick="showConfirmAndSubmit(event)">수정 완료</button>
+
+            </form>
+            <a th:href="@{/subscription/delete/{planId}(planId=${updateSubscribeDto.id})}" class="btn btn-danger">삭제</a>
         </div>
     </div>
 
 </div>
 
 </body>
+<script>
+    function showConfirmAndSubmit(event) {
+        event.preventDefault();  // 폼 제출을 일시 중지
+
+        // 알림 표시
+        if (confirm('정말 수정하시겠습니까?')) {
+            event.target.form.submit();  // 알림에서 '확인'을 클릭하면 폼 제출
+        }
+    }
+</script>
 </html>
