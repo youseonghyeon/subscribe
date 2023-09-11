@@ -27,6 +27,9 @@ public class Subscription extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private SubscriptionPlan subscriptionPlan;
+
     // paymentFrequency: 결제 주기 (월별, 분기별, 반기별, 연간) TODO 추가 예정
 
     // TODO 추후 구독 일시 정지 기능 추가 예정

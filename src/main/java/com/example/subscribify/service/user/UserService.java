@@ -1,6 +1,7 @@
 package com.example.subscribify.service.user;
 
 import com.example.subscribify.dto.CreateUserDto;
+import com.example.subscribify.dto.UpdateUserDto;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.exception.UserAlreadyExistsException;
 import com.example.subscribify.repository.UserRepository;
@@ -20,12 +21,19 @@ public class UserService {
 
 
     /**
-     * 사용자 생성
+     * 사용자 생성 (username, email 중복 검사)
      *
      * @param createUserDto
      * @return userId (PK : Long)
      */
     public Long createUser(CreateUserDto createUserDto) {
+
+        if (isUsernameTaken(createUserDto.getUsername())) {
+            throw new UserAlreadyExistsException("Username is already taken");
+        } else if (isEmailTaken(createUserDto.getEmail())) {
+            throw new UserAlreadyExistsException("Email is already taken");
+        }
+
         User user = User.builder()
                 .username(createUserDto.getUsername())
                 .password(passwordEncoder.encode(createUserDto.getPassword()))
@@ -55,22 +63,22 @@ public class UserService {
     /**
      * 사용자 정보 수정
      *
-     * @param userId
-     * @param createUserDto // TODO: 수정할 정보만 받아서 처리하도록 변경 (현재는 편의상 createUserDto로 받음)
+     * @param userId 변경할 사용자의 PK
+     * @param updateUserDto // TODO: 수정할 정보만 받아서 처리하도록 변경 (현재는 편의상 createUserDto로 받음)
      * @return User
      */
     @Transactional
-    public Long updateUser(Long userId, CreateUserDto createUserDto) {
-        User findUser = userRepository.findById(userId)
+    public Long updateUser(Long userId, UpdateUserDto updateUserDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found userId : " + userId));
-        findUser.update(
-                passwordEncoder.encode(createUserDto.getPassword()),
-                createUserDto.getEmail(),
-                createUserDto.getAddress(),
-                createUserDto.getCity(),
-                createUserDto.getState(),
-                createUserDto.getZip(),
-                createUserDto.getCountry());
+        user.update(
+                passwordEncoder.encode(updateUserDto.getPassword()),
+                updateUserDto.getEmail(),
+                updateUserDto.getAddress(),
+                updateUserDto.getCity(),
+                updateUserDto.getState(),
+                updateUserDto.getZip(),
+                updateUserDto.getCountry());
         return userId;
     }
 
@@ -80,19 +88,17 @@ public class UserService {
      * @param userId
      */
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+        throw new UnsupportedOperationException("Not implemented yet");
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new NoSuchElementException("User not found userId : " + userId));
+//        user.delete();
     }
 
-
-    public boolean isUserUnique(CreateUserDto createUserDto) {
-        return !isUsernameTaken(createUserDto.getUsername()) && !isEmailTaken(createUserDto.getEmail());
-    }
-
-    private boolean isUsernameTaken(String username) {
+    public boolean isUsernameTaken(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
 
-    private boolean isEmailTaken(String email) {
+    public boolean isEmailTaken(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 

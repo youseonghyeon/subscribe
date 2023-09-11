@@ -4,20 +4,20 @@ import com.example.subscribify.dto.PaymentRequest;
 import com.example.subscribify.dto.PaymentResponse;
 import com.example.subscribify.entity.PaymentStatus;
 import com.example.subscribify.service.payment.PgService;
-import com.example.subscribify.service.subscribe.SubscribeService;
+import com.example.subscribify.service.subscribe.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class PaymentController {
 
     private final PgService pgService;
-    private final SubscribeService subscribeService;
+    private final SubscriptionService subscriptionService;
 
     @PostMapping("/payment/exec")
     public String execPayment(@RequestBody PaymentRequest paymentRequest) {
@@ -25,7 +25,7 @@ public class PaymentController {
 
         PaymentResponse paymentResponse = pgService.processPayment(paymentRequest);
         if (PaymentStatus.COMPLETED.equals(paymentResponse.getStatus())) {
-            subscribeService.activateSubscribe(paymentRequest.getSubscriptionId());
+            subscriptionService.activateSubscribe(paymentRequest.getSubscriptionId());
         }
 
         return "redirect:/";

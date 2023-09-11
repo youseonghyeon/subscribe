@@ -1,5 +1,6 @@
 package com.example.subscribify.service.subscribe;
 
+import com.example.subscribify.dto.EnrollSubscriptionRequest;
 import com.example.subscribify.dto.PurchaseDto;
 import com.example.subscribify.entity.Customer;
 import com.example.subscribify.entity.Subscription;
@@ -11,9 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class SubscribeService {
+public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
@@ -26,10 +29,10 @@ public class SubscribeService {
      * @return 구독 구매 ID, 단 현재 단계 에서는 구독이 시작 되지 않음 (결제가 되면 구독이 시작됨)
      */
     @Transactional
-    public Long purchaseSubscribe(Customer buyer, PurchaseDto purchaseDto) {
+    public Long purchaseSubscribe(Customer buyer, Long purchaseDto) {
         // 구독 Plan을 가져와서
-        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(purchaseDto.getSubscriptionPlanId())
-                .orElseThrow(() -> new IllegalStateException("Invalid subscription plan ID: " + purchaseDto.getSubscriptionPlanId()));
+        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(purchaseDto)
+                .orElseThrow(() -> new IllegalStateException("Invalid subscription plan ID: " + purchaseDto));
 
         // plan 정보와 user 정보를 저장
         Subscription subscription = Subscription.builder()
@@ -38,6 +41,7 @@ public class SubscribeService {
                 .price(subscriptionPlan.getPrice())
                 .durationMonth(subscriptionPlan.getDuration())
                 .discountedPrice(subscriptionPlan.getDiscountedPrice())
+                .subscriptionPlan(subscriptionPlan)
                 .customer(buyer)
                 .build();
 
@@ -64,4 +68,7 @@ public class SubscribeService {
         subscription.cancel();
     }
 
+    public List<Subscription> getSubscriptions(Long planId) {
+        return subscriptionRepository.findAllBySubscriptionPlanId(planId);
+    }
 }

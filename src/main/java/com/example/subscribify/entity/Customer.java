@@ -19,11 +19,10 @@ public class Customer {
     @GeneratedValue
     private Long id;
 
-    // 고객 시스템에서 사용하는 유저 아이디 (Not Unique)
+    // 고객 시스템에서 사용하는 유저 아이디
     private String customerId;
-
-    // 고객사 아이디
-    private String partnerId;
+    // 어플리케이션 아이디
+    private Long applicationId;
 
     @OneToMany(mappedBy = "customer")
     private List<Subscription> subscriptions;

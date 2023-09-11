@@ -4,7 +4,7 @@ import com.example.subscribify.dto.PaymentDto;
 import com.example.subscribify.entity.Payment;
 import com.example.subscribify.entity.PaymentStatus;
 import com.example.subscribify.repository.PaymentRepository;
-import com.example.subscribify.service.subscribe.SubscribeService;
+import com.example.subscribify.service.subscribe.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final SubscribeService subscribeService;
+    private final SubscriptionService subscriptionService;
 
     /**
      * 결제 서비스
@@ -30,7 +30,7 @@ public class PaymentService {
                 .build();
         paymentRepository.save(payment);
         if (PaymentStatus.COMPLETED.equals(payment.getStatus())) {
-            subscribeService.activateSubscribe(subscriptionId);
+            subscriptionService.activateSubscribe(subscriptionId);
         }
     }
 

@@ -11,34 +11,34 @@
 
 <div class="container mt-5">
     <h1 class="text-center mb-5">구독 서비스 등록</h1>
-    <form th:action="@{/}" method="post" th:object="${subscribe}">
+    <form th:action="@{/subscription/enroll}" method="post" th:object="${subscribe}">
         <div class="form-group">
             <label for="subscribeName">SubscribeName:</label>
-            <input type="text" class="form-control" id="subscribeName" th:field="${subscribe.subscribeName}" required>
+            <input type="text" class="form-control" id="subscribeName" th:field="*{subscribeName}" required>
         </div>
         <div class="form-group">
             <label for="duration">Duration:</label>
-            <input type="text" class="form-control" id="duration" th:field="${subscribe.duration}" required>
+            <input type="text" class="form-control" id="duration" th:field="*{duration}" required>
         </div>
         <div class="form-group">
             <label for="durationUnit">DurationUnit:</label>
-            <input type="text" class="form-control" id="durationUnit" th:field="${subscribe.durationUnit}" required>
+            <input type="text" class="form-control" id="durationUnit" th:field="*{durationUnit}" required>
         </div>
         <div class="form-group">
             <label for="price">Price:</label>
-            <input type="text" class="form-control" id="price" th:field="${subscribe.price}" required>
+            <input type="text" class="form-control" id="price" th:field="*{price}" required>
         </div>
         <div class="form-group">
             <label for="discount">Discount:</label>
-            <input type="text" class="form-control" id="discount" th:field="${subscribe.discount}" required>
+            <input type="text" class="form-control" id="discount" th:field="*{discount}" required>
         </div>
         <div class="form-group">
             <label for="discountType">DiscountType:</label>
-            <input type="text" class="form-control" id="discountType" th:field="${subscribe.discountType}" required>
+            <input type="text" class="form-control" id="discountType" th:field="*{discountType}" required>
         </div>
         <div class="form-group">
             <label for="discountedPrice">DiscountPrice:</label>
-            <input type="text" class="form-control" id="discountedPrice" th:field="${subscribe.discountedPrice}" required>
+            <input type="text" class="form-control" id="discountedPrice" th:field="*{discountedPrice}" required>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

@@ -27,13 +27,15 @@ public class UserController {
 
     @GetMapping("/signup")
     public String signUpForm(Model model) {
-        model.addAttribute("createUserDto", mockModel(model));
-
-//        model.addAttribute("user", new CreateUserDto());
+        // 테스트를 위한 더미 데이터
+        model.addAttribute("createUserDto", mockModel());
+        // TODO: 테스트를 위한 더미 데이터를 사용하지 않을 경우 아래 코드로 변경
+        // model.addAttribute("user", new CreateUserDto());
         return "user/signup";
     }
 
-    private CreateUserDto mockModel(Model model) {
+    // 테스트를 위한 임시 코드입니다. PROD 배포 시 꼭 삭제해주세요.
+    private CreateUserDto mockModel() {
         int i = new Random().nextInt(1000) + 1;
         int j = new Random().nextInt(1000) + 1;
         return new CreateUserDto("testUser" + i, "qwer1234", "qwer1234",
@@ -45,8 +47,9 @@ public class UserController {
     @PostMapping("/signup")
     public String signUp(@ModelAttribute @Valid CreateUserDto createUserDto, BindingResult bindingResult) {
         validatePasswordConfirmation(createUserDto, bindingResult);
+        // TODO 아래 validateUserUniqueness 는 "중복검사" 버튼을 추가해서 지우는 것으로 함
+        // TODO 검증 로직은 service layer 에서 처리하는 것으로 변경해야 함
         validateUserUniqueness(createUserDto, bindingResult);
-
         if (bindingResult.hasErrors()) {
             return "user/signup";
         }
@@ -55,20 +58,26 @@ public class UserController {
         return "redirect:/";
     }
 
+
     private void validatePasswordConfirmation(CreateUserDto createUserDto, BindingResult bindingResult) {
         if (isNotPasswordMatchingConfirmation(createUserDto)) {
             bindingResult.rejectValue("passwordConfirm", "invalid.passwordConfirm", "비밀번호가 일치하지 않습니다.");
         }
     }
 
-    private void validateUserUniqueness(CreateUserDto createUserDto, BindingResult bindingResult) {
-        if (!userService.isUserUnique(createUserDto)) {
-            bindingResult.rejectValue("username", "invalid.username", "이미 사용중인 아이디입니다.");
-        }
-    }
-
     private boolean isNotPasswordMatchingConfirmation(CreateUserDto createUserDto) {
         return !createUserDto.getPassword().equals(createUserDto.getPasswordConfirm());
+    }
+
+
+    private void validateUserUniqueness(CreateUserDto createUserDto, BindingResult bindingResult) {
+        // 쿼리가 2회 실행됨
+        if (userService.isUsernameTaken(createUserDto.getUsername())) {
+            bindingResult.rejectValue("username", "invalid.username", "이미 사용중인 아이디입니다.");
+        }
+        if (userService.isEmailTaken(createUserDto.getEmail())) {
+            bindingResult.rejectValue("email", "invalid.email", "이미 사용중인 이메일입니다.");
+        }
     }
 
 

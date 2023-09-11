@@ -1,5 +1,6 @@
 package com.example.subscribify.config;
 
+import com.example.subscribify.config.security.SecurityArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

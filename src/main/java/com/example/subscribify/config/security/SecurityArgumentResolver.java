@@ -1,8 +1,8 @@
-package com.example.subscribify.config;
+package com.example.subscribify.config.security;
 
+import com.example.subscribify.config.security.CustomUserDetails;
 import com.example.subscribify.domain.SessionUser;
 import com.example.subscribify.entity.User;
-import com.example.subscribify.service.user.CustomUserDetails;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

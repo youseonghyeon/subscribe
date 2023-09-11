@@ -21,7 +21,7 @@ public class SubscriptionPlan extends BaseTimeEntity{
     private DiscountUnit discountType; // Percent, Fixed, None
     private Long discountedPrice;
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private Application application;
 
     public void update(String subscribeName, Integer duration, DurationUnit durationUnit, Long price, Double discount, DiscountUnit discountType, Long discountedPrice) {
         this.planName = subscribeName;

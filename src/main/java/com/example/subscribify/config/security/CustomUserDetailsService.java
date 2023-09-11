@@ -1,5 +1,6 @@
-package com.example.subscribify.service.user;
+package com.example.subscribify.config.security;
 
+import com.example.subscribify.config.security.CustomUserDetails;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

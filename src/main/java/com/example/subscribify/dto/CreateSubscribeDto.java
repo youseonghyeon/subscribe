@@ -10,6 +10,7 @@ import lombok.*;
 @ToString
 public class CreateSubscribeDto {
 
+    private Long applicationId;
     private String subscribeName;
     private Integer duration;
     private DurationUnit durationUnit; // Month, Year

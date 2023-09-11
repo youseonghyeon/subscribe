@@ -2,7 +2,6 @@ package com.example.subscribify.controller;
 
 import com.example.subscribify.dto.CreateUserDto;
 import com.example.subscribify.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +9,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -26,75 +25,106 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Test
     @DisplayName("회원가입 성공 케이스")
     @Transactional
     void signUpSuccessCase() throws Exception {
-        String username = "qwer1234";
+        //given
+        String username = "tesetUser";
+        CreateUserDto userDto = createMockUserDto(username);
 
-        mockMvc.perform(post("/signup")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createMockCreateUserDto(username)))
-        ).andExpect(status().isOk());
+        //when
+        performSignUp(userDto)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
 
-        assertTrue(userRepository.findByUsername(username).isPresent());
+        //then
+        assertThat(userRepository.findByUsername(username)).isPresent();
     }
 
     @Test
     @DisplayName("회원가입 실패 케이스 - 중복된 Username")
     @Transactional
-    void signUpFailCaseDuplicatedUsername() throws Exception {
-        String username = "qwer1234";
-        mockMvc.perform(post("/signup")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createMockCreateUserDto(username)))
-        ).andExpect(status().isOk());
-        // when
-        mockMvc.perform(post("/signup")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createMockCreateUserDto(username)))
-        ).andExpect(status().is4xxClientError());
+    void 중복된_username_으로_회원가입_실패() throws Exception {
+        //given
+        String sameUsername = "sameUser";
+        CreateUserDto firstUserDto = createMockUserDto(sameUsername, "first@mail.com");
+        CreateUserDto secondUserDto = createMockUserDto(sameUsername, "second@mail.com");
 
-        long userSize = userRepository.findAll().stream().filter(u -> u.getUsername().equals(username)).count();
-        assertEquals(1, userSize);
+        //when
+        ResultActions firstSignUp = performSignUp(firstUserDto);
+        ResultActions secondSignUp = performSignUp(secondUserDto);
+
+        //then
+        firstSignUp.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+        secondSignUp.andExpect(status().is2xxSuccessful())
+                .andExpect(model().hasErrors());
+
+        long userCount = userRepository.countByUsername(sameUsername);
+        assertThat(userCount).isEqualTo(1);
     }
 
     @Test
     @DisplayName("회원가입 실패 케이스 - 중복된 Email")
     @Transactional
-    void signUpFailCaseDuplicatedEmail() throws Exception {
-        String username = "qwer1234";
-        mockMvc.perform(post("/signup")
+    void 중복된_email_로_회원가입_실패() throws Exception {
+        //given
+        String sameEmail = "sameEmail@mail.com";
+        CreateUserDto firstUserDto = createMockUserDto("firstUser", sameEmail);
+        CreateUserDto secondUserDto = createMockUserDto("secondUser", sameEmail);
+
+        //when
+        ResultActions firstSignUp = performSignUp(firstUserDto);
+        ResultActions secondSignUp = performSignUp(secondUserDto);
+
+        firstSignUp.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+        secondSignUp.andExpect(status().is2xxSuccessful())
+                .andExpect(model().hasErrors());
+
+        long emailCount = userRepository.countByEmail(sameEmail);
+        assertThat(emailCount).isEqualTo(1);
+    }
+
+    private ResultActions performSignUp(CreateUserDto userDto) throws Exception {
+        return mockMvc.perform(post("/signup")
                 .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createMockCreateUserDto(username + "1")))
-        ).andExpect(status().isOk());
-        // when
-        mockMvc.perform(post("/signup")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createMockCreateUserDto(username + "2")))
-        ).andExpect(status().is4xxClientError());
-
-        long userSize = userRepository.findAll().stream().filter(u -> u.getEmail().equals("email@naver.com")).count();
-        assertEquals(1, userSize);
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("username", userDto.getUsername())
+                .param("password", userDto.getPassword())
+                .param("passwordConfirm", userDto.getPasswordConfirm())
+                .param("email", userDto.getEmail())
+                .param("firstName", userDto.getFirstName())
+                .param("lastName", userDto.getLastName())
+                .param("address", userDto.getAddress())
+                .param("city", userDto.getCity())
+                .param("state", userDto.getState())
+                .param("zip", userDto.getZip())
+                .param("country", userDto.getCountry())
+        );
     }
 
-    private CreateUserDto createMockCreateUserDto(String username) {
-        return new CreateUserDto(username, "password", "password", "email@naver.com", "firstName",
-                "lastName", "address", "city", "state", "zip", "country");
+
+    private CreateUserDto createMockUserDto(String username) {
+        return this.createMockUserDto(username, "testEmail@mail.com");
     }
 
-    private CreateUserDto createMockCreateUserDto() {
-        return new CreateUserDto("username", "password", "password", "email@naver.com", "firstName",
-                "lastName", "address", "city", "state", "zip", "country");
+    private CreateUserDto createMockUserDto(String username, String email) {
+        return new CreateUserDto(
+                username,
+                "qwer1234",
+                "qwer1234",
+                email,
+                "firstName",
+                "lastName",
+                "address",
+                "city",
+                "state",
+                "zip",
+                "country");
     }
+
 }

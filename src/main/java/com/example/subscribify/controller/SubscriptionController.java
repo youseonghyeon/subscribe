@@ -3,10 +3,9 @@ package com.example.subscribify.controller;
 import com.example.subscribify.domain.SessionUser;
 import com.example.subscribify.dto.CreateSubscribeDto;
 import com.example.subscribify.dto.UpdateSubscribeDto;
-import com.example.subscribify.entity.DiscountUnit;
-import com.example.subscribify.entity.DurationUnit;
-import com.example.subscribify.entity.SubscriptionPlan;
-import com.example.subscribify.entity.User;
+import com.example.subscribify.entity.*;
+import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.service.subscribe.SubscriptionService;
 import com.example.subscribify.service.subscriptionplan.SubscriptionPlanService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -26,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 public class SubscriptionController {
 
     private final SubscriptionPlanService subscriptionPlanService;
+    private final SubscriptionService subscriptionService;
+    private final ApplicationRepository applicationRepository;
 
 
     /**
@@ -50,7 +52,7 @@ public class SubscriptionController {
      */
     private static CreateSubscribeDto mockSubscription() {
         String nowTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        return new CreateSubscribeDto(
+        return new CreateSubscribeDto(null,
                 "테스트 구독 상품" + nowTime,
                 1,
                 DurationUnit.MONTH,
@@ -65,13 +67,14 @@ public class SubscriptionController {
      * 새로운 구독을 등록합니다.
      *
      * @param createSubscribeDto 생성될 구독 정보 DTO
-     * @param user               세션에 있는 사용자 정보
      * @return 구독 상세 페이지 경로
      */
     @PostMapping("/subscription/enroll")
-    public String enrollSubscription(@ModelAttribute CreateSubscribeDto createSubscribeDto, @SessionUser User user) {
+    public String enrollSubscription(@ModelAttribute CreateSubscribeDto createSubscribeDto) {
+        Application application = applicationRepository.findById(createSubscribeDto.getApplicationId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
         log.info("createSubscribeDto={}", createSubscribeDto);
-        Long planId = subscriptionPlanService.createSubscribePlan(createSubscribeDto, user);
+        Long planId = subscriptionPlanService.createSubscribePlan(createSubscribeDto, application);
         return "redirect:/subscription/" + planId;
     }
 
@@ -85,7 +88,9 @@ public class SubscriptionController {
     @GetMapping("/subscription/{planId}")
     public String subscriptionDetail(Model model, @PathVariable Long planId) {
         SubscriptionPlan subscribePlan = subscriptionPlanService.getSubscribePlan(planId);
+        List<Subscription> subscriptions = subscriptionService.getSubscriptions(planId);
         model.addAttribute("plan", subscribePlan);
+        model.addAttribute("subscriptions", subscriptions);
         return "subscription/detail";
     }
 
@@ -131,7 +136,7 @@ public class SubscriptionController {
     }
 
     /**
-     * 특정 구독 정보를 업데이트합니다.
+     * 구독 정보를 업데이트합니다.
      *
      * @param updateSubscribeDto 수정될 구독 정보 DTO
      * @param planId             수정할 구독의 ID
@@ -142,6 +147,17 @@ public class SubscriptionController {
         log.info("updateSubscribeDto={}", updateSubscribeDto);
         subscriptionPlanService.updateSubscribePlan(planId, updateSubscribeDto);
         return "redirect:/subscription/" + planId;
+    }
+
+    /**
+     * 구독을 삭제합니다.
+     *
+     * @return
+     */
+    @PostMapping("subscription/delete/{planId}")
+    public String subscriptionDelete(@PathVariable Long planId) {
+        subscriptionPlanService.deleteSubscribePlan(planId);
+        return "redirect:/";
     }
 
     @GetMapping("docs/api")

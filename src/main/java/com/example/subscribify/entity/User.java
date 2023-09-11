@@ -27,8 +27,9 @@ public class User extends BaseTimeEntity {
     private String zip;
     private String country;
 
+
     @OneToMany(mappedBy = "user")
-    private List<SubscriptionPlan> enrolledPlan;
+    private List<Application> applications;
 
     public void update(String encodedPassword, String email, String address, String city, String state, String zip, String country) {
         this.password = encodedPassword;
@@ -55,5 +56,9 @@ public class User extends BaseTimeEntity {
                 ", zip='" + zip + '\'' +
                 ", country='" + country + '\'' +
                 '}';
+    }
+
+    public void delete() {
+        // TODO Soft Delete 로직 만들어야 함
     }
 }

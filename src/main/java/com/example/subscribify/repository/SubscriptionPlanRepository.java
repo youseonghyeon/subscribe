@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface SubscriptionPlanRepository extends JpaRepository<SubscriptionPlan, Long> {
 
-    List<SubscriptionPlan> findByUser(User user);
+
+
 
 }
