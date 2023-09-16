@@ -1,6 +1,6 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.dto.CreateUserDto;
+import com.example.subscribify.dto.controller.EnrollUserRequest;
 import com.example.subscribify.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,47 +35,47 @@ public class UserController {
     }
 
     // 테스트를 위한 임시 코드입니다. PROD 배포 시 꼭 삭제해주세요.
-    private CreateUserDto mockModel() {
+    private EnrollUserRequest mockModel() {
         int i = new Random().nextInt(1000) + 1;
         int j = new Random().nextInt(1000) + 1;
-        return new CreateUserDto("testUser" + i, "qwer1234", "qwer1234",
+        return new EnrollUserRequest("testUser" + i, "qwer1234", "qwer1234",
                 "testMail" + j + "@mail.com", "first", "last", "황새울로",
                 "성남시", "서울", "12345", "대한민국");
     }
 
 
     @PostMapping("/signup")
-    public String signUp(@ModelAttribute @Valid CreateUserDto createUserDto, BindingResult bindingResult) {
-        validatePasswordConfirmation(createUserDto, bindingResult);
+    public String signUp(@ModelAttribute @Valid EnrollUserRequest enrollUserRequest, BindingResult bindingResult) {
+        validatePasswordConfirmation(enrollUserRequest, bindingResult);
         // TODO 아래 validateUserUniqueness 는 "중복검사" 버튼을 추가해서 지우는 것으로 함
         // TODO 검증 로직은 service layer 에서 처리하는 것으로 변경해야 함
-        validateUserUniqueness(createUserDto, bindingResult);
+        validateUserUniqueness(enrollUserRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             return "user/signup";
         }
 
-        userService.createUser(createUserDto);
+        userService.createUser(enrollUserRequest);
         return "redirect:/";
     }
 
 
-    private void validatePasswordConfirmation(CreateUserDto createUserDto, BindingResult bindingResult) {
-        if (isNotPasswordMatchingConfirmation(createUserDto)) {
+    private void validatePasswordConfirmation(EnrollUserRequest enrollUserRequest, BindingResult bindingResult) {
+        if (isNotPasswordMatchingConfirmation(enrollUserRequest)) {
             bindingResult.rejectValue("passwordConfirm", "invalid.passwordConfirm", "비밀번호가 일치하지 않습니다.");
         }
     }
 
-    private boolean isNotPasswordMatchingConfirmation(CreateUserDto createUserDto) {
-        return !createUserDto.getPassword().equals(createUserDto.getPasswordConfirm());
+    private boolean isNotPasswordMatchingConfirmation(EnrollUserRequest enrollUserRequest) {
+        return !enrollUserRequest.getPassword().equals(enrollUserRequest.getPasswordConfirm());
     }
 
 
-    private void validateUserUniqueness(CreateUserDto createUserDto, BindingResult bindingResult) {
+    private void validateUserUniqueness(EnrollUserRequest enrollUserRequest, BindingResult bindingResult) {
         // 쿼리가 2회 실행됨
-        if (userService.isUsernameTaken(createUserDto.getUsername())) {
+        if (userService.isUsernameTaken(enrollUserRequest.getUsername())) {
             bindingResult.rejectValue("username", "invalid.username", "이미 사용중인 아이디입니다.");
         }
-        if (userService.isEmailTaken(createUserDto.getEmail())) {
+        if (userService.isEmailTaken(enrollUserRequest.getEmail())) {
             bindingResult.rejectValue("email", "invalid.email", "이미 사용중인 이메일입니다.");
         }
     }

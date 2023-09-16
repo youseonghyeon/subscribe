@@ -1,8 +1,7 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.config.security.ApiKeyGenerator;
 import com.example.subscribify.domain.SessionUser;
-import com.example.subscribify.dto.CreateApplicationDto;
+import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;

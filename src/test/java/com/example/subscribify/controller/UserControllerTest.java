@@ -1,6 +1,6 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.dto.CreateUserDto;
+import com.example.subscribify.dto.controller.EnrollUserRequest;
 import com.example.subscribify.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class UserControllerTest {
     void signUpSuccessCase() throws Exception {
         //given
         String username = "tesetUser";
-        CreateUserDto userDto = createMockUserDto(username);
+        EnrollUserRequest userDto = createMockUserDto(username);
 
         //when
         performSignUp(userDto)
@@ -50,8 +50,8 @@ class UserControllerTest {
     void 중복된_username_으로_회원가입_실패() throws Exception {
         //given
         String sameUsername = "sameUser";
-        CreateUserDto firstUserDto = createMockUserDto(sameUsername, "first@mail.com");
-        CreateUserDto secondUserDto = createMockUserDto(sameUsername, "second@mail.com");
+        EnrollUserRequest firstUserDto = createMockUserDto(sameUsername, "first@mail.com");
+        EnrollUserRequest secondUserDto = createMockUserDto(sameUsername, "second@mail.com");
 
         //when
         ResultActions firstSignUp = performSignUp(firstUserDto);
@@ -73,8 +73,8 @@ class UserControllerTest {
     void 중복된_email_로_회원가입_실패() throws Exception {
         //given
         String sameEmail = "sameEmail@mail.com";
-        CreateUserDto firstUserDto = createMockUserDto("firstUser", sameEmail);
-        CreateUserDto secondUserDto = createMockUserDto("secondUser", sameEmail);
+        EnrollUserRequest firstUserDto = createMockUserDto("firstUser", sameEmail);
+        EnrollUserRequest secondUserDto = createMockUserDto("secondUser", sameEmail);
 
         //when
         ResultActions firstSignUp = performSignUp(firstUserDto);
@@ -89,7 +89,7 @@ class UserControllerTest {
         assertThat(emailCount).isEqualTo(1);
     }
 
-    private ResultActions performSignUp(CreateUserDto userDto) throws Exception {
+    private ResultActions performSignUp(EnrollUserRequest userDto) throws Exception {
         return mockMvc.perform(post("/signup")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -108,12 +108,12 @@ class UserControllerTest {
     }
 
 
-    private CreateUserDto createMockUserDto(String username) {
+    private EnrollUserRequest createMockUserDto(String username) {
         return this.createMockUserDto(username, "testEmail@mail.com");
     }
 
-    private CreateUserDto createMockUserDto(String username, String email) {
-        return new CreateUserDto(
+    private EnrollUserRequest createMockUserDto(String username, String email) {
+        return new EnrollUserRequest(
                 username,
                 "qwer1234",
                 "qwer1234",

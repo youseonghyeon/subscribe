@@ -1,6 +1,6 @@
 package com.example.subscribify.service.payment;
 
-import com.example.subscribify.dto.PaymentDto;
+import com.example.subscribify.dto.service.PaymentServiceRequest;
 import com.example.subscribify.entity.Payment;
 import com.example.subscribify.entity.PaymentStatus;
 import com.example.subscribify.repository.PaymentRepository;
@@ -20,13 +20,13 @@ public class PaymentService {
      * 결제 서비스
      */
     @Transactional
-    public void completePayment(Long subscriptionId, PaymentDto paymentDto) {
+    public void completePayment(Long subscriptionId, PaymentServiceRequest paymentServiceRequest) {
         Payment payment = Payment.builder()
-                .transactionId(paymentDto.getTransactionId())
-                .userId(paymentDto.getUserId())
-                .productId(paymentDto.getProductId())
-                .amount(paymentDto.getAmount())
-                .status(paymentDto.getStatus())
+                .transactionId(paymentServiceRequest.getTransactionId())
+                .userId(paymentServiceRequest.getUserId())
+                .productId(paymentServiceRequest.getProductId())
+                .amount(paymentServiceRequest.getAmount())
+                .status(paymentServiceRequest.getStatus())
                 .build();
         paymentRepository.save(payment);
         if (PaymentStatus.COMPLETED.equals(payment.getStatus())) {

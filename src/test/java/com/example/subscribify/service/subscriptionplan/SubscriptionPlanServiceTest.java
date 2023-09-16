@@ -1,7 +1,7 @@
 package com.example.subscribify.service.subscriptionplan;
 
-import com.example.subscribify.dto.CreateSubscribeDto;
-import com.example.subscribify.dto.UpdateSubscribeDto;
+import com.example.subscribify.dto.controller.CreateSubscribeDto;
+import com.example.subscribify.dto.controller.UpdateSubscribeDto;
 import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.repository.SubscriptionPlanRepository;

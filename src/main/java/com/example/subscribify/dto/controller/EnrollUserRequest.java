@@ -1,4 +1,4 @@
-package com.example.subscribify.dto;
+package com.example.subscribify.dto.controller;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserDto {
+public class EnrollUserRequest {
 
     @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$", message = "유효하지 않은 아이디입니다.")
     private String username;

@@ -1,7 +1,7 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.dto.CreateSubscribeDto;
-import com.example.subscribify.dto.UpdateSubscribeDto;
+import com.example.subscribify.dto.controller.CreateSubscribeDto;
+import com.example.subscribify.dto.controller.UpdateSubscribeDto;
 import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.service.subscribe.SubscriptionService;
@@ -87,8 +87,10 @@ public class SubscriptionController {
     public String subscriptionDetail(Model model, @PathVariable Long subscriptionPlanId) {
         SubscriptionPlan subscribePlan = subscriptionPlanService.getSubscribePlan(subscriptionPlanId);
         List<Subscription> subscriptions = subscriptionService.getSubscriptions(subscriptionPlanId);
+        Long applicationId = subscribePlan.getApplication().getId();
         model.addAttribute("subscriptionPlan", subscribePlan);
         model.addAttribute("subscriptions", subscriptions);
+        model.addAttribute("applicationId", applicationId);
         return "subscription/detail";
     }
 

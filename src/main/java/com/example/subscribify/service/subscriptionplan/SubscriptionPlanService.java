@@ -1,12 +1,11 @@
 package com.example.subscribify.service.subscriptionplan;
 
 import com.example.subscribify.config.security.CustomUserDetails;
-import com.example.subscribify.dto.CreateSubscribeDto;
-import com.example.subscribify.dto.UpdateSubscribeDto;
+import com.example.subscribify.dto.controller.CreateSubscribeDto;
+import com.example.subscribify.dto.controller.UpdateSubscribeDto;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.entity.SubscriptionStatus;
-import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.repository.SubscriptionRepository;

@@ -1,7 +1,7 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.dto.PaymentRequest;
-import com.example.subscribify.dto.PaymentResponse;
+import com.example.subscribify.dto.controller.PaymentRequest;
+import com.example.subscribify.dto.controller.PaymentResponse;
 import com.example.subscribify.entity.PaymentStatus;
 import com.example.subscribify.service.payment.PgService;
 import com.example.subscribify.service.subscribe.SubscriptionService;

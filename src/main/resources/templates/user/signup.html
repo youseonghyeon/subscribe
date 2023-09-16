@@ -12,7 +12,7 @@
                     <h4>Sign Up</h4>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/signup}" th:object="${createUserDto}" method="post">
+                    <form th:action="@{/signup}" th:object="${enrollUserRequest}" method="post">
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" th:field="*{username}" required>

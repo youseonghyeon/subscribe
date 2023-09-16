@@ -1,4 +1,4 @@
-package com.example.subscribify.dto;
+package com.example.subscribify.dto.controller;
 
 import com.example.subscribify.entity.DiscountUnit;
 import com.example.subscribify.entity.DurationUnit;

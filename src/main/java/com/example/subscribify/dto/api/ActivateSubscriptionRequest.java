@@ -1,4 +1,4 @@
-package com.example.subscribify.dto;
+package com.example.subscribify.dto.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.example.subscribify.service.user;
 
-import com.example.subscribify.dto.CreateUserDto;
-import com.example.subscribify.dto.UpdateUserDto;
+import com.example.subscribify.dto.controller.EnrollUserRequest;
+import com.example.subscribify.dto.service.UpdateUserServiceRequest;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.exception.UserAlreadyExistsException;
 import com.example.subscribify.repository.UserRepository;
@@ -23,28 +23,28 @@ public class UserService {
     /**
      * 사용자 생성 (username, email 중복 검사)
      *
-     * @param createUserDto
+     * @param enrollUserRequest
      * @return userId (PK : Long)
      */
-    public Long createUser(CreateUserDto createUserDto) {
+    public Long createUser(EnrollUserRequest enrollUserRequest) {
 
-        if (isUsernameTaken(createUserDto.getUsername())) {
+        if (isUsernameTaken(enrollUserRequest.getUsername())) {
             throw new UserAlreadyExistsException("Username is already taken");
-        } else if (isEmailTaken(createUserDto.getEmail())) {
+        } else if (isEmailTaken(enrollUserRequest.getEmail())) {
             throw new UserAlreadyExistsException("Email is already taken");
         }
 
         User user = User.builder()
-                .username(createUserDto.getUsername())
-                .password(passwordEncoder.encode(createUserDto.getPassword()))
-                .email(createUserDto.getEmail())
-                .firstName(createUserDto.getFirstName())
-                .lastName(createUserDto.getLastName())
-                .address(createUserDto.getAddress())
-                .city(createUserDto.getCity())
-                .state(createUserDto.getState())
-                .zip(createUserDto.getZip())
-                .country(createUserDto.getCountry())
+                .username(enrollUserRequest.getUsername())
+                .password(passwordEncoder.encode(enrollUserRequest.getPassword()))
+                .email(enrollUserRequest.getEmail())
+                .firstName(enrollUserRequest.getFirstName())
+                .lastName(enrollUserRequest.getLastName())
+                .address(enrollUserRequest.getAddress())
+                .city(enrollUserRequest.getCity())
+                .state(enrollUserRequest.getState())
+                .zip(enrollUserRequest.getZip())
+                .country(enrollUserRequest.getCountry())
                 .build();
         return userRepository.save(user).getId();
     }
@@ -64,21 +64,21 @@ public class UserService {
      * 사용자 정보 수정
      *
      * @param userId 변경할 사용자의 PK
-     * @param updateUserDto // TODO: 수정할 정보만 받아서 처리하도록 변경 (현재는 편의상 createUserDto로 받음)
+     * @param updateUserServiceRequest // TODO: 수정할 정보만 받아서 처리하도록 변경 (현재는 편의상 createUserDto로 받음)
      * @return User
      */
     @Transactional
-    public Long updateUser(Long userId, UpdateUserDto updateUserDto) {
+    public Long updateUser(Long userId, UpdateUserServiceRequest updateUserServiceRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found userId : " + userId));
         user.update(
-                passwordEncoder.encode(updateUserDto.getPassword()),
-                updateUserDto.getEmail(),
-                updateUserDto.getAddress(),
-                updateUserDto.getCity(),
-                updateUserDto.getState(),
-                updateUserDto.getZip(),
-                updateUserDto.getCountry());
+                passwordEncoder.encode(updateUserServiceRequest.getPassword()),
+                updateUserServiceRequest.getEmail(),
+                updateUserServiceRequest.getAddress(),
+                updateUserServiceRequest.getCity(),
+                updateUserServiceRequest.getState(),
+                updateUserServiceRequest.getZip(),
+                updateUserServiceRequest.getCountry());
         return userId;
     }
 

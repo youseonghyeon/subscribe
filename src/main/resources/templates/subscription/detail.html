@@ -12,10 +12,14 @@
 <div class="container mt-5">
     <h1 class="text-center mb-5">구독 서비스 상세 정보</h1>
 
+    <div>
+        <a th:href="@{/applications/{applicationId}(applicationId=${applicationId})}">애플리케이션</a>
+    </div>
     <div class="card mb-3">
         <div class="card-body" th:object="${subscriptionPlan}">
             <h5 class="card-title" th:text="*{planName}"></h5>
             <p class="card-text">
+                <strong>Plan ID:</strong> <span th:text="*{id}"></span><br>
                 <strong>기간:</strong> <span th:text="*{duration}"></span><br>
                 <strong>기간 단위:</strong> <span th:text="*{durationUnit}"></span><br>
                 <strong>가격:</strong> <span th:text="*{price}"></span><br>

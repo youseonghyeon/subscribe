@@ -1,4 +1,4 @@
-package com.example.subscribify.dto;
+package com.example.subscribify.dto.controller;
 
 import com.example.subscribify.entity.PaymentStatus;
 import lombok.AllArgsConstructor;
@@ -6,9 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PaymentRequest {
-
-    private Long subscriptionId;
+public class PaymentResponse {
 
     private String transactionId;
 

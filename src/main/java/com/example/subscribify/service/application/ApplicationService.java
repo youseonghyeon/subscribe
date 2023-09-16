@@ -1,8 +1,7 @@
 package com.example.subscribify.service.application;
 
 import com.example.subscribify.config.security.ApiKeyGenerator;
-import com.example.subscribify.dto.ApplicationEnrollDto;
-import com.example.subscribify.dto.CreateApplicationDto;
+import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
