@@ -12,6 +12,7 @@
 <div class="container mt-5">
     <h1 class="text-center mb-5">구독 서비스 등록</h1>
     <form th:action="@{/subscription/enroll}" method="post" th:object="${subscribe}">
+        <input type="hidden" th:field="*{applicationId}" th:value="*{applicationId}"/>
         <div class="form-group">
             <label for="subscribeName">SubscribeName:</label>
             <input type="text" class="form-control" id="subscribeName" th:field="*{subscribeName}" required>

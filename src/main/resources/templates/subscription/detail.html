@@ -13,7 +13,7 @@
     <h1 class="text-center mb-5">구독 서비스 상세 정보</h1>
 
     <div class="card mb-3">
-        <div class="card-body" th:object="${plan}">
+        <div class="card-body" th:object="${subscriptionPlan}">
             <h5 class="card-title" th:text="*{planName}"></h5>
             <p class="card-text">
                 <strong>기간:</strong> <span th:text="*{duration}"></span><br>

@@ -25,14 +25,14 @@ public class SubscriptionService {
      * 구독 서비스 구매
      *
      * @param buyer       구매자 정보
-     * @param purchaseDto 구독 Plan 정보
+     * @param planId 구독 Plan 정보
      * @return 구독 구매 ID, 단 현재 단계 에서는 구독이 시작 되지 않음 (결제가 되면 구독이 시작됨)
      */
     @Transactional
-    public Long purchaseSubscribe(Customer buyer, Long purchaseDto) {
+    public Long purchaseSubscribe(Customer buyer, Long planId) {
         // 구독 Plan을 가져와서
-        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(purchaseDto)
-                .orElseThrow(() -> new IllegalStateException("Invalid subscription plan ID: " + purchaseDto));
+        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
+                .orElseThrow(() -> new IllegalStateException("Invalid subscription plan ID: " + planId));
 
         // plan 정보와 user 정보를 저장
         Subscription subscription = Subscription.builder()

@@ -8,6 +8,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@Table(name = "applications")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Application {
@@ -27,4 +28,8 @@ public class Application {
     @OneToMany(mappedBy = "application")
     private List<SubscriptionPlan> subscriptionPlans;
 
+    public void updateKeys(String apiKey, String secretKey) {
+        this.apiKey = apiKey;
+        this.secretKey = secretKey;
+    }
 }

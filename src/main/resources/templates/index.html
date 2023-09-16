@@ -8,19 +8,25 @@
 <div th:replace="~{common :: header}"></div>
 
 <div class="container mt-5">
-    <h1 class="mb-4">구독 서비스 플랫폼</h1>
+    <div style="height: 60px"></div>
+    <h1 class="mb-4">Build with <br>Subscription Plan</h1>
+    <h2 class="mb-4">추천 제품</h2>
 
-    <section class="mb-5">
-        <h2>구독 플랜 등록</h2>
-        <div class="d-flex mt-2">
-            <button class="btn btn-primary mr-2" onclick="enrollPageRedirect()">구독 생성하기</button>
+    <div class="row">
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">구독 중계 서비스</h4>
+                    <p class="card-text">구독서비스를 간단하게 시작할 수 있습니다.</p>
+                    <a th:href="@{/}">시작하기</a>
+                </div>
+            </div>
         </div>
-    </section>
 
-    <section>
-        <h2>My Page</h2>
-    </section>
+    </div>
 </div>
+
 <script>
     const enrollPageRedirect = () => {
         location.href = "/subscription/enroll";

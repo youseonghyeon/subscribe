@@ -111,12 +111,14 @@ public class SubscriptionPlanService {
 
     /**
      * 나의 구독 Plan 조회
+     *
+     *
      */
-    public List<SubscriptionPlan> getMySubscribePlan(User user) {
-        Application application = applicationRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 사용자의 Application이 존재하지 않습니다.: " + user.getId()));
-        return application.getSubscriptionPlans();
-    }
+//    public List<SubscriptionPlan> getMySubscribePlan(User user, Application application) {
+//        Application application = applicationRepository.findByUserId(user.getId())
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 사용자의 Application이 존재하지 않습니다.: " + user.getId()));
+//        return application.getSubscriptionPlans();
+//    }
 
 
     /**

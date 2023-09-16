@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout:: globalHead}">
+    <title>구독 서비스 조회</title>
+</head>
+
+<body>
+
+<div th:replace="~{common :: header}"></div>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">애플리 케이션 상세 정보</h1>
+
+    <div class="card mb-3">
+        <div th:if="${!app.getApiKey().isEmpty() && !app.getSecretKey().isEmpty()}">
+            <strong>애플리케이션 키:</strong> <span th:text="${app.getApiKey()}"></span><br>
+            <strong>시크릿 키:</strong> <span th:text="${app.getSecretKey()}"></span><br>
+            <form th:action="@{/applications/keys/generate}" method="post">
+                <input type="hidden" name="applicationId" th:value="${app.id}">
+                <button type="submit">키 재발급</button>
+            </form>
+        </div>
+        <div th:unless="${!app.getApiKey().isEmpty() && !app.getSecretKey().isEmpty()}">
+            <form th:action="@{/applications/keys/generate}" method="post">
+                <input type="hidden" name="applicationId" th:value="${app.id}">
+                <button type="submit">키 발급</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:each="subscriptionPlan : ${subscriptionPlans}" class="card mb-3">
+        <a th:href="@{/subscription/{planId}(planId=*{id})}" th:object="${subscriptionPlan}" class="card-body">
+            <h5 class="card-title" th:text="*{planName}"></h5>
+            <p class="card-text">
+                <strong>기간:</strong> <span th:text="*{duration}"></span><br>
+                <strong>기간 단위:</strong> <span th:text="*{durationUnit}"></span><br>
+                <strong>가격:</strong> <span th:text="*{price}"></span><br>
+                <strong>할인:</strong> <span th:text="*{discount}"></span><br>
+                <strong>할인 유형:</strong> <span th:text="*{discountType}"></span><br>
+                <strong>할인된 가격:</strong> <span th:text="*{discountedPrice}"></span>
+            </p>
+        </a>
+
+    </div>
+    <div th:if="${subscriptionPlans.isEmpty()}">
+        <p class="text-center">구독 서비스가 없습니다.</p>
+    </div>
+    <div>
+        <a th:href="@{/subscription/enroll/{applicationId}(applicationId=${app.id})}">등록하러 가기</a>
+    </div>
+
+</div>
+</body>
+</html>

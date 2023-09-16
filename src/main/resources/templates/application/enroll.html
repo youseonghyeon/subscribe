@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout:: globalHead}">
+    <title>구독 서비스 등록</title>
+</head>
+
+<body>
+
+<div th:replace="~{common :: header}"></div>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Application 등록</h1>
+    <form th:action="@{/applications/enroll}" method="post" th:object="${createApplicationDto}">
+<!--        앱 아이콘 -->
+        <div class="form-group">
+            <label for="applicationIcon">앱 아이콘</label>
+            <input type="text" class="form-control" id="applicationIcon" th:field="*{icon}" required>
+        </div>
+<!--        앱 이름 -->
+        <div class="form-group">
+            <label for="applicationName">앱 이름</label>
+            <input type="text" class="form-control" id="applicationName" th:field="*{name}" required>
+        </div>
+
+        <!--        앱 이름 -->
+        <div class="form-group">
+            <label for="businessName">사업자명</label>
+            <input type="text" class="form-control" id="businessName" th:field="*{businessName}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+</body>
+</html>

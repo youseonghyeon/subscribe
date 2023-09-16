@@ -1,6 +1,5 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.domain.SessionUser;
 import com.example.subscribify.dto.CreateSubscribeDto;
 import com.example.subscribify.dto.UpdateSubscribeDto;
 import com.example.subscribify.entity.*;
@@ -36,10 +35,10 @@ public class SubscriptionController {
      * @param model Model 객체
      * @return 구독 등록 폼 페이지 경로
      */
-    @GetMapping("/subscription/enroll")
-    public String enrollSubscriptionForm(Model model) {
+    @GetMapping("/subscription/enroll/{applicationId}")
+    public String enrollSubscriptionForm(Model model, @PathVariable Long applicationId) {
         // 테스트를 위한 더미 데이터
-        model.addAttribute("subscribe", mockSubscription());
+        model.addAttribute("subscribe", mockSubscription(applicationId));
 
 //        model.addAttribute("subscribe", new CreateSubscribeDto());
         return "subscription/enroll";
@@ -50,9 +49,9 @@ public class SubscriptionController {
      *
      * @return 생성된 더미 구독 DTO
      */
-    private static CreateSubscribeDto mockSubscription() {
+    private static CreateSubscribeDto mockSubscription(Long applicationId) {
         String nowTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        return new CreateSubscribeDto(null,
+        return new CreateSubscribeDto(applicationId,
                 "테스트 구독 상품" + nowTime,
                 1,
                 DurationUnit.MONTH,
@@ -73,7 +72,6 @@ public class SubscriptionController {
     public String enrollSubscription(@ModelAttribute CreateSubscribeDto createSubscribeDto) {
         Application application = applicationRepository.findById(createSubscribeDto.getApplicationId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
-        log.info("createSubscribeDto={}", createSubscribeDto);
         Long planId = subscriptionPlanService.createSubscribePlan(createSubscribeDto, application);
         return "redirect:/subscription/" + planId;
     }
@@ -82,41 +80,16 @@ public class SubscriptionController {
      * 특정 구독의 상세 페이지를 반환합니다.
      *
      * @param model  Model 객체
-     * @param planId 상세 정보를 조회할 구독의 ID
+     * @param subscriptionPlanId 상세 정보를 조회할 구독의 ID
      * @return 구독 상세 페이지 경로
      */
-    @GetMapping("/subscription/{planId}")
-    public String subscriptionDetail(Model model, @PathVariable Long planId) {
-        SubscriptionPlan subscribePlan = subscriptionPlanService.getSubscribePlan(planId);
-        List<Subscription> subscriptions = subscriptionService.getSubscriptions(planId);
-        model.addAttribute("plan", subscribePlan);
+    @GetMapping("/subscription/{subscriptionPlanId}")
+    public String subscriptionDetail(Model model, @PathVariable Long subscriptionPlanId) {
+        SubscriptionPlan subscribePlan = subscriptionPlanService.getSubscribePlan(subscriptionPlanId);
+        List<Subscription> subscriptions = subscriptionService.getSubscriptions(subscriptionPlanId);
+        model.addAttribute("subscriptionPlan", subscribePlan);
         model.addAttribute("subscriptions", subscriptions);
         return "subscription/detail";
-    }
-
-    /**
-     * 모든 구독 리스트 페이지를 반환합니다.
-     *
-     * @param model Model 객체
-     * @return 구독 리스트 페이지 경로
-     */
-    @GetMapping("subscription")
-    public String subscriptionList(Model model) {
-        model.addAttribute("plans", subscriptionPlanService.getAllSubscribePlan());
-        return "subscription/list";
-    }
-
-    /**
-     * 현재 사용자의 구독 리스트 페이지를 반환합니다.
-     *
-     * @param model Model 객체
-     * @param user  세션에 있는 사용자 정보
-     * @return 사용자의 구독 리스트 페이지 경로
-     */
-    @GetMapping("subscription/manage")
-    public String MySubscriptionList(Model model, @SessionUser User user) {
-        model.addAttribute("subscriptionPlans", subscriptionPlanService.getMySubscribePlan(user));
-        return "subscription/list";
     }
 
 
