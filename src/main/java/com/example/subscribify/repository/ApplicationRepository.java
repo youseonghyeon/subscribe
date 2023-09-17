@@ -12,4 +12,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     @Query("select a from Application a left join fetch a.subscriptionPlans where a.id = :applicationId")
     Optional<Application> findByIdWithSubscriptionPlans(Long applicationId);
+
+    Optional<Application> findByApiKey(String authorization);
 }

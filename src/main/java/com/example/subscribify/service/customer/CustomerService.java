@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -18,7 +18,7 @@ public class CustomerService {
 
     @Transactional
     public Customer getOrCreateCustomer(String customerId, Long applicationId) {
-        return customerRepository.findByCustomerId(customerId)
+        return customerRepository.findByCustomerIdAndApplicationId(customerId, applicationId)
                 .orElseGet(() -> createAndSaveCustomer(customerId, applicationId));
     }
 
@@ -31,5 +31,13 @@ public class CustomerService {
     }
 
 
+    public List<Customer> getCustomersByApplicationId(Long applicationId) {
+        return customerRepository.findByApplicationId(applicationId);
+    }
 
+    public Customer getCustomerByCustomerIdAndApplicationId(String customerId, Long applicationId) {
+        return customerRepository.findByCustomerIdAndApplicationId(customerId, applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid customer ID"));
+
+    }
 }

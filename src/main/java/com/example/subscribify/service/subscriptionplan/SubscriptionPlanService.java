@@ -102,6 +102,13 @@ public class SubscriptionPlanService {
     }
 
     /**
+     * 구독 Plan 전체 조회 By Application
+     */
+    public List<SubscriptionPlan> getSubscriptionPlanByApplicationId(Long applicationId) {
+        return subscriptionPlanRepository.findAllByApplicationId(applicationId);
+    }
+
+    /**
      * 구독 Plan 전체 조회
      */
     public List<SubscriptionPlan> getAllSubscribePlan() {

@@ -28,7 +28,7 @@ public class UserController {
     @GetMapping("/signup")
     public String signUpForm(Model model) {
         // 테스트를 위한 더미 데이터
-        model.addAttribute("createUserDto", mockModel());
+        model.addAttribute("enrollUserRequest", mockModel());
         // TODO: 테스트를 위한 더미 데이터를 사용하지 않을 경우 아래 코드로 변경
         // model.addAttribute("user", new CreateUserDto());
         return "user/signup";

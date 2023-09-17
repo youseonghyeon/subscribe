@@ -18,15 +18,20 @@
             <strong>시크릿 키:</strong> <span th:text="${app.getSecretKey()}"></span><br>
             <form th:action="@{/applications/keys/generate}" method="post">
                 <input type="hidden" name="applicationId" th:value="${app.id}">
-                <button type="submit">키 재발급</button>
+                <button type="submit" onclick="showConfirmAndSubmit(event)">키 재발급</button>
             </form>
         </div>
         <div th:unless="${!app.getApiKey().isEmpty() && !app.getSecretKey().isEmpty()}">
             <form th:action="@{/applications/keys/generate}" method="post">
                 <input type="hidden" name="applicationId" th:value="${app.id}">
-                <button type="submit">키 발급</button>
+                <button type="submit" onclick="showConfirmAndSubmit(event)">키 발급</button>
             </form>
         </div>
+    </div>
+
+    <div class="card mb-3">
+<!--        결제 등의 옵션을 추가/삭제 할 수 있는 탭-->
+        <button>옵션 추가</button>
     </div>
 
     <div th:each="subscriptionPlan : ${subscriptionPlans}" class="card mb-3">
@@ -52,4 +57,12 @@
 
 </div>
 </body>
+<script>
+    function showConfirmAndSubmit(event) {
+        event.preventDefault();
+        if (confirm('키를 새로 발급하시겠습니까?')) {
+            event.target.form.submit();
+        }
+    }
+</script>
 </html>

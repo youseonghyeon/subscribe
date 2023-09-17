@@ -9,6 +9,4 @@ import lombok.Data;
 public class EnrollSubscriptionServiceRequest {
     Customer customer;
     Long planId;
-    String apiKey;
-    String secretKey;
 }

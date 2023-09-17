@@ -20,6 +20,7 @@ public class SubscriptionPlan extends BaseTimeEntity{
     private Double discount;
     private DiscountUnit discountType; // Percent, Fixed, None
     private Long discountedPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Application application;
 

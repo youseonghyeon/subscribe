@@ -9,9 +9,6 @@ import lombok.*;
 public class EnrollSubscriptionRequest {
 
     private String customerId;
-    private Long applicationId;
     private Long planId;
-    private String apiKey;
-    private String secretKey;
 
 }

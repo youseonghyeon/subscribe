@@ -1,9 +1,6 @@
 package com.example.subscribify.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -11,6 +8,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@Table(indexes = {@Index(columnList = "applicationId")})
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Customer {
@@ -21,7 +19,7 @@ public class Customer {
 
     // 고객 시스템에서 사용하는 유저 아이디
     private String customerId;
-    // 어플리케이션 아이디
+
     private Long applicationId;
 
     @OneToMany(mappedBy = "customer")

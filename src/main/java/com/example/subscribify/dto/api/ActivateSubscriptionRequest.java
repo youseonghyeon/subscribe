@@ -10,8 +10,5 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class ActivateSubscriptionRequest {
-
     private Long subscriptionId;
-    private String apiKey;
-    private String secretKey;
 }

@@ -19,20 +19,20 @@ public class PaymentService {
     /**
      * 결제 서비스
      */
-    @Transactional
-    public void completePayment(Long subscriptionId, PaymentServiceRequest paymentServiceRequest) {
-        Payment payment = Payment.builder()
-                .transactionId(paymentServiceRequest.getTransactionId())
-                .userId(paymentServiceRequest.getUserId())
-                .productId(paymentServiceRequest.getProductId())
-                .amount(paymentServiceRequest.getAmount())
-                .status(paymentServiceRequest.getStatus())
-                .build();
-        paymentRepository.save(payment);
-        if (PaymentStatus.COMPLETED.equals(payment.getStatus())) {
-            subscriptionService.activateSubscribe(subscriptionId);
-        }
-    }
+//    @Transactional
+//    public void completePayment(Long subscriptionId, PaymentServiceRequest paymentServiceRequest) {
+//        Payment payment = Payment.builder()
+//                .transactionId(paymentServiceRequest.getTransactionId())
+//                .userId(paymentServiceRequest.getUserId())
+//                .productId(paymentServiceRequest.getProductId())
+//                .amount(paymentServiceRequest.getAmount())
+//                .status(paymentServiceRequest.getStatus())
+//                .build();
+//        paymentRepository.save(payment);
+//        if (PaymentStatus.COMPLETED.equals(payment.getStatus())) {
+//            subscriptionService.activateSubscribe(subscriptionId);
+//        }
+//    }
 
     /**
      * 결제 상태 변경 서비스

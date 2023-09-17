@@ -9,6 +9,5 @@ import java.util.List;
 public interface SubscriptionPlanRepository extends JpaRepository<SubscriptionPlan, Long> {
 
 
-
-
+    List<SubscriptionPlan> findAllByApplicationId(Long applicationId);
 }

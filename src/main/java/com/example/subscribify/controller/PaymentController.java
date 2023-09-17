@@ -23,10 +23,10 @@ public class PaymentController {
     public String execPayment(@RequestBody PaymentRequest paymentRequest) {
         // TODO 파라미터 검증 로직 추가
 
-        PaymentResponse paymentResponse = pgService.processPayment(paymentRequest);
-        if (PaymentStatus.COMPLETED.equals(paymentResponse.getStatus())) {
-            subscriptionService.activateSubscribe(paymentRequest.getSubscriptionId());
-        }
+//        PaymentResponse paymentResponse = pgService.processPayment(paymentRequest);
+//        if (PaymentStatus.COMPLETED.equals(paymentResponse.getStatus())) {
+//            subscriptionService.activateSubscribe(paymentRequest.getSubscriptionId());
+//        }
 
         return "redirect:/";
     }

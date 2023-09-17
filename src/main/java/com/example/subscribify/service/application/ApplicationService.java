@@ -3,8 +3,10 @@ package com.example.subscribify.service.application;
 import com.example.subscribify.config.security.ApiKeyGenerator;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
+import com.example.subscribify.entity.Customer;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.repository.CustomerRepository;
 import com.example.subscribify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     @Transactional
     public Long createApplication(CreateApplicationDto createApplicationDto, User user) {
@@ -52,4 +55,5 @@ public class ApplicationService {
         application.updateKeys(apiKey, secretKey);
         return application;
     }
+
 }

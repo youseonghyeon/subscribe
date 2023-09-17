@@ -35,10 +35,10 @@ class SubscriptionServiceTest {
         Application application = setupService.createApplication(user);
         SubscriptionPlan subscriptionPlan = setupService.createSubscriptionPlan(application);
         Customer customer = setupService.createCustomer(application);
-        EnrollSubscriptionServiceRequest serviceRequest = new EnrollSubscriptionServiceRequest(customer, subscriptionPlan.getId(), application.getApiKey(), application.getSecretKey());
+        EnrollSubscriptionServiceRequest serviceRequest = new EnrollSubscriptionServiceRequest(customer, subscriptionPlan.getId());
 
         //when
-        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(serviceRequest);
+        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
 
         // then
         Subscription subscription = subscriptionRepository.findById(serviceResponse.getSubscriptionId())

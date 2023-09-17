@@ -37,17 +37,19 @@
             <table class="table table-bordered mt-3">
                 <thead>
                 <tr>
-                    <th>UserId</th>
+                    <th>CustomerId</th>
                     <th>시작한 날짜</th>
                     <th>만료 날짜</th>
                     <th>PlanId</th>
+                    <th>상태</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="subscription : ${subscriptions}">
-                    <td th:text="${subscription.customer.id}">아이디</td>
+                    <td th:text="${subscription.customer.customerId}">아이디</td>
                     <td th:text="${subscription.startDate}">시작일</td>
                     <td th:text="${subscription.endDate}">종료일</td>
+                    <td th:text="${subscription.subscriptionPlan.id}">구독 아이디</td>
                     <td th:text="${subscription.status}">상태</td>
                 </tr>
                 </tbody>
