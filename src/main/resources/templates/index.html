@@ -7,7 +7,7 @@
 
 <div th:replace="~{common :: header}"></div>
 
-<div class="container mt-5">
+<div class="main-container mt-5">
     <div style="height: 60px"></div>
     <h1 class="mb-4">Build with <br>Subscription Plan</h1>
     <h2 class="mb-4">추천 제품</h2>
@@ -43,4 +43,40 @@
 </script>
 
 </body>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f8fa;
+    }
+    .main-container {
+        background-color: #ffffff;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 40px;
+    }
+    .main-container .card {
+        transition: transform 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .main-container .card:hover {
+        transform: scale(1.05);
+    }
+    .main-container .card-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    .main-container a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .main-container a:hover {
+        background-color: #0056b3;
+    }
+</style>
+
 </html>

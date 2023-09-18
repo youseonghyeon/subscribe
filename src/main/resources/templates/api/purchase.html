@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout:: globalHead}">
+    <title>구독 서비스 결제</title>
+
+</head>
+
+<body>
+
+<div class="payment-container">
+    <h1 class="text-center mb-5">구독 서비스 결제</h1>
+
+    <div class="payment-section">
+        <label for="cardNumber" class="payment-label">카드 번호</label>
+        <input type="text" id="cardNumber" class="payment-input" placeholder="1234 5678 9012 3456">
+    </div>
+
+    <div class="payment-section">
+        <label for="expiryDate" class="payment-label">만료 날짜</label>
+        <input type="text" id="expiryDate" class="payment-input" placeholder="MM/YY">
+    </div>
+
+    <div class="payment-section">
+        <label for="cvc" class="payment-label">CVC</label>
+        <input type="text" id="cvc" class="payment-input" placeholder="123">
+    </div>
+
+    <!-- Here you can dynamically render the price based on the selected plan -->
+    <div class="payment-total">
+        <span>총액:</span>
+        <span>₩10,000</span>
+    </div>
+
+    <button class="btn-confirm">결제하기</button>
+</div>
+
+</body>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f2f2f2;
+    }
+    .payment-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .payment-section {
+        margin-bottom: 30px;
+    }
+    .payment-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .payment-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .payment-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .btn-confirm {
+        width: 100%;
+        padding: 15px;
+        background-color: #007BFF;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .btn-confirm:hover {
+        background-color: #0056b3;
+    }
+</style>
+</html>

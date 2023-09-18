@@ -9,14 +9,11 @@ import com.example.subscribify.entity.*;
 import com.example.subscribify.service.customer.CustomerService;
 import com.example.subscribify.service.subscribe.SubscriptionService;
 import com.example.subscribify.service.subscriptionplan.SubscriptionPlanService;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class SubscriptionApiController {
 
@@ -31,35 +29,104 @@ public class SubscriptionApiController {
     private final SubscriptionService subscriptionService;
     private final SubscriptionPlanService subscriptionPlanService;
 
+    @PostMapping("/enroll")
+    public ResponseEntity<EnrollSubscriptionServiceResponse> enrollSubscription(
+            @RequestBody EnrollSubscriptionRequest request,
+            @AuthApplication Application application) {
 
-    @PostMapping("/api/enroll")
-    public ResponseEntity<EnrollSubscriptionServiceResponse> enrollSubscription(@RequestBody EnrollSubscriptionRequest request, @AuthApplication Application application) {
         Customer customer = customerService.getOrCreateCustomer(request.getCustomerId(), application.getId());
-        // 구독 등록
-        EnrollSubscriptionServiceRequest serviceRequest = new EnrollSubscriptionServiceRequest(customer, request.getPlanId());
-        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
-        if (StringUtils.hasText(serviceResponse.getErrorMessage())) {
-            return new ResponseEntity<>(serviceResponse, HttpStatus.BAD_REQUEST);
+
+        EnrollSubscriptionServiceRequest serviceRequest =
+                new EnrollSubscriptionServiceRequest(customer, request.getPlanId());
+
+        EnrollSubscriptionServiceResponse serviceResponse =
+                subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
+
+        if (serviceResponse.hasError()) {
+            return ResponseEntity.badRequest().body(serviceResponse);
         }
 
-        return new ResponseEntity<>(serviceResponse, HttpStatus.OK);
+        return ResponseEntity.ok(serviceResponse);
     }
 
-    @PostMapping("/api/activate")
-    public void activateSubscription(@RequestBody ActivateSubscriptionRequest request, @AuthApplication Application application) {
+    @PostMapping("/activate")
+    public ResponseEntity<Void> activateSubscription(
+            @RequestBody ActivateSubscriptionRequest request,
+            @AuthApplication Application application) {
+
         subscriptionService.activateSubscribe(request.getSubscriptionId(), application.getApiKey());
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/api/customers")
+//    @PostMapping("/enrollAndActivate")
+//    public ResponseEntity<?> enrollAndActivateSubscription(
+//            @RequestBody EnrollAndActivateSubscriptionRequest request,
+//            @AuthApplication Application application) {
+//
+//        // 사용자 등록
+//        Customer customer = customerService.getOrCreateCustomer(request.getCustomerId(), application.getId());
+//
+//        EnrollSubscriptionServiceRequest serviceRequest =
+//                new EnrollSubscriptionServiceRequest(customer, request.getPlanId());
+//
+//        EnrollSubscriptionServiceResponse serviceResponse =
+//                subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
+//
+//        if (serviceResponse.hasError()) {
+//            return ResponseEntity.badRequest().body(serviceResponse);
+//        }
+//
+//        // 사용자 서비스 활성화
+//        subscriptionService.activateSubscribe(serviceResponse.getSubscriptionId(), application.getApiKey());
+//
+//        return ResponseEntity.ok(serviceResponse);
+//    }
+//
+//    public class EnrollAndActivateSubscriptionRequest {
+//        private String customerId;
+//        private String planId;
+//
+//        // getters, setters, etc.
+//    }
+
+
+    @GetMapping("/customers")
     public ResponseEntity<List<CustomerResult>> listAllCustomers(@AuthApplication Application application) {
         List<Customer> customers = customerService.getCustomersByApplicationId(application.getId());
+
         if (customers.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
+
         List<CustomerResult> results = customers.stream().map(CustomerResult::new).collect(Collectors.toList());
-        return new ResponseEntity<>(results, HttpStatus.OK);
+        return ResponseEntity.ok(results);
     }
 
+    @GetMapping("/customers/{customerId}")
+    public ResponseEntity<Customer> getCustomerDetails(
+            @PathVariable("customerId") String customerId,
+            @AuthApplication Application application) {
+
+        Customer customer = customerService.getCustomerByCustomerIdAndApplicationId(customerId, application.getId());
+
+        if (customer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(customer);
+    }
+
+    @GetMapping("/plans")
+    public ResponseEntity<List<SubscriptionPlanResult>> getSubscriptionPlans(@AuthApplication Application application) {
+        List<SubscriptionPlan> subscriptionPlans = subscriptionPlanService.getSubscriptionPlanByApplicationId(application.getId());
+
+        if (subscriptionPlans.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<SubscriptionPlanResult> results =
+                subscriptionPlans.stream().map(SubscriptionPlanResult::new).collect(Collectors.toList());
+        return ResponseEntity.ok(results);
+    }
 
 
     @Data
@@ -75,24 +142,6 @@ public class SubscriptionApiController {
         }
     }
 
-    @GetMapping("/api/customers/{customerId}")
-    public ResponseEntity<Customer> getCustomerDetails(@PathVariable("customerId") String customerId, @AuthApplication Application application) {
-        Customer customer = customerService.getCustomerByCustomerIdAndApplicationId(customerId, application.getId());
-        if (customer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(customer, HttpStatus.OK);
-    }
-
-    @GetMapping("/api/subscriptionplans")
-    public ResponseEntity<List<SubscriptionPlanResult>> getSubscriptionPlans(@AuthApplication Application application) {
-        List<SubscriptionPlan> subscriptionPlans = subscriptionPlanService.getSubscriptionPlanByApplicationId(application.getId());
-        if (subscriptionPlans.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        List<SubscriptionPlanResult> results = subscriptionPlans.stream().map(SubscriptionPlanResult::new).collect(Collectors.toList());
-        return new ResponseEntity<>(results, HttpStatus.OK);
-    }
 
     @Data
     @AllArgsConstructor
@@ -117,6 +166,9 @@ public class SubscriptionApiController {
             this.discountedPrice = subscriptionPlan.getDiscountedPrice();
         }
     }
-
-
 }
+
+
+
+
+

@@ -18,4 +18,8 @@ public class EnrollSubscriptionServiceResponse {
     public EnrollSubscriptionServiceResponse(Long subscriptionId) {
         this.subscriptionId = subscriptionId;
     }
+
+    public boolean hasError() {
+        return errorMessage != null;
+    }
 }
