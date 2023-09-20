@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{layout:: globalHead}">
-    <title>구독 서비스 상세 정보</title>
+    <title>구독 서비스 API 사용 가이드</title>
 </head>
 
 <body>
@@ -12,8 +12,68 @@
 <div class="container mt-5">
     <h1 class="text-center mb-5">구독 서비스 API 사용 가이드</h1>
 
+    <h2>1. 구독 Customer 등록</h2>
+    <h3>Endpoint:</h3>
+    <code>POST /api/subscription/customer</code>
+
+    <h3>Request Body Example:</h3>
+    <button onclick="copyCode('requestBodyExample1')">Copy</button>
+    <pre id="requestBodyExample1">
+{
+  "customerId": "123456",
+  "email": "example@example.com",
+  "name": "John Doe"
+}
+    </pre>
+
+    <h3>Response:</h3>
+    <button onclick="copyCode('requestBodyExample2')">Copy</button>
+    <pre id="requestBodyExample2">
+{
+  "status": "success",
+  "message": "Customer registered successfully."
+}
+    </pre>
+
+    <h2>2. 구독 활성화</h2>
+    <h3>Endpoint:</h3>
+    <code>POST /api/subscription/activate</code>
+
+    <h3>Request Body Example:</h3>
+    <button onclick="copyCode('requestBodyExample3')">Copy</button>
+    <pre id="requestBodyExample3">
+{
+  "customerId": "123456",
+  "subscriptionPlanId": "plan_001"
+}
+    </pre>
+
+    <h3>Response:</h3>
+    <button onclick="copyCode('requestBodyExample4')">Copy</button>
+    <pre id="requestBodyExample4">
+{
+  "status": "success",
+  "message": "Subscription activated successfully."
+}
+    </pre>
+
+    <!-- 여기에 다른 API 정보를 계속 추가할 수 있습니다. -->
 
 </div>
 
 </body>
+
+<script>
+    function copyCode(elementId) {
+        var copyText = document.getElementById(elementId).innerText;
+        var textarea = document.createElement("textarea");
+        textarea.textContent = copyText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        alert("코드가 복사되었습니다.");
+    }
+</script>
+
 </html>

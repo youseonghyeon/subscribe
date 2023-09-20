@@ -57,7 +57,7 @@ public class Subscription extends BaseTimeEntity {
         this.status = SubscriptionStatus.CANCELED;
     }
 
-    public void start() {
+    public void activate() {
         this.status = SubscriptionStatus.ACTIVE;
         this.startDate = LocalDateTime.now();
         this.endDate = LocalDateTime.now().plusMonths(this.durationMonth);

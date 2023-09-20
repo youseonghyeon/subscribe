@@ -1,4 +1,4 @@
-package com.example.subscribify.controller.template;
+package com.example.subscribify.api.template;
 
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.SubscriptionPlan;

@@ -1,4 +1,4 @@
-package com.example.subscribify.controller;
+package com.example.subscribify.api;
 
 import com.example.subscribify.domain.AuthApplication;
 import com.example.subscribify.dto.api.ActivateSubscriptionRequest;

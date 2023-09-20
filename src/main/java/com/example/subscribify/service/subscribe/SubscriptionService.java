@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +61,7 @@ public class SubscriptionService {
         if (findAuth == null || !findAuth.equals(authorization)) {
             // TODO 예외 처리 및 에러 메시지 전송 처리를 해야 함
         } else {
-            subscription.start();
+            subscription.activate();
         }
     }
 
@@ -81,5 +80,9 @@ public class SubscriptionService {
 
     public List<Subscription> getSubscriptions(Long planId) {
         return subscriptionRepository.findAllBySubscriptionPlanId(planId);
+    }
+
+    public List<Subscription> getSubscriptionsWithCustomer(Long planId) {
+        return subscriptionRepository.findAllWithCustomerBySubscriptionPlanId(planId);
     }
 }

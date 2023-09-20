@@ -19,7 +19,6 @@ public class Customer {
 
     // 고객 시스템에서 사용하는 유저 아이디
     private String customerId;
-
     private Long applicationId;
 
     @OneToMany(mappedBy = "customer")

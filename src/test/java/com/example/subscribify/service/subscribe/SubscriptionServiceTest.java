@@ -4,7 +4,7 @@ import com.example.subscribify.dto.service.EnrollSubscriptionServiceRequest;
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceResponse;
 import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.SubscriptionRepository;
-import com.example.subscribify.util.SetupService;
+import com.example.subscribify.util.SetupTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
-@Import(SetupService.class)
+@Import(SetupTestUtils.class)
 class SubscriptionServiceTest {
 
     @Autowired
@@ -25,16 +25,16 @@ class SubscriptionServiceTest {
     private SubscriptionRepository subscriptionRepository;
 
     @Autowired
-    private SetupService setupService;
+    private SetupTestUtils setupTestUtils;
 
     @Test
     @DisplayName("구독 서비스 등록 성공 케이스")
     void enrollSubscriptionSuccessCase() {
         //given
-        User user = setupService.createUser();
-        Application application = setupService.createApplication(user);
-        SubscriptionPlan subscriptionPlan = setupService.createSubscriptionPlan(application);
-        Customer customer = setupService.createCustomer(application);
+        User user = setupTestUtils.createUser();
+        Application application = setupTestUtils.createApplication(user);
+        SubscriptionPlan subscriptionPlan = setupTestUtils.createSubscriptionPlan(application);
+        Customer customer = setupTestUtils.createCustomer(application);
         EnrollSubscriptionServiceRequest serviceRequest = new EnrollSubscriptionServiceRequest(customer, subscriptionPlan.getId());
 
         //when
@@ -51,11 +51,11 @@ class SubscriptionServiceTest {
     @DisplayName("구독 서비스 취소 성공 케이스")
     void cancelSubscriptionSuccessCase() {
         //given
-        User user = setupService.createUser();
-        Application application = setupService.createApplication(user);
-        SubscriptionPlan subscriptionPlan = setupService.createSubscriptionPlan(application);
-        Customer customer = setupService.createCustomer(application);
-        Subscription subscription = setupService.createSubscription(subscriptionPlan, customer);
+        User user = setupTestUtils.createUser();
+        Application application = setupTestUtils.createApplication(user);
+        SubscriptionPlan subscriptionPlan = setupTestUtils.createSubscriptionPlan(application);
+        Customer customer = setupTestUtils.createCustomer(application);
+        Subscription subscription = setupTestUtils.createSubscription(subscriptionPlan, customer);
 
 
         // when

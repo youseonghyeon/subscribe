@@ -6,18 +6,18 @@
 </head>
 
 <body>
-
 <div th:replace="~{common :: header}"></div>
 
 <div class="container mt-5">
-    <h1 class="text-center mb-5">구독 서비스 상세 정보</h1>
+    <h1 class="text-center mb-5" style="color: #2C3E50;">구독 서비스 상세 정보</h1>
 
-    <div>
-        <a th:href="@{/applications/{applicationId}(applicationId=${applicationId})}">애플리케이션</a>
+    <div class="mb-4">
+        <a th:href="@{/applications/{applicationId}(applicationId=${applicationId})}" class="btn btn-secondary">애플리케이션</a>
     </div>
-    <div class="card mb-3">
+
+    <div class="card mb-3 shadow-sm">
         <div class="card-body" th:object="${subscriptionPlan}">
-            <h5 class="card-title" th:text="*{planName}"></h5>
+            <h5 class="card-title" th:text="*{planName}" style="border-bottom: 2px solid #2C3E50; padding-bottom: 10px;"></h5>
             <p class="card-text">
                 <strong>Plan ID:</strong> <span th:text="*{id}"></span><br>
                 <strong>기간:</strong> <span th:text="*{duration}"></span><br>
@@ -27,45 +27,80 @@
                 <strong>할인 유형:</strong> <span th:text="*{discountType}"></span><br>
                 <strong>할인된 가격:</strong> <span th:text="*{discountedPrice}"></span>
             </p>
-            <a th:href="@{/subscription/update/{planId}(planId=*{id})}" class="btn btn-primary">수정</a>
-            <form th:action="@{/subscription/delete/{planId}(planId=*{id})}" method="post">
-                <button type="submit" onclick="showConfirmAndSubmit(event)">삭제</button>
+            <a th:href="@{/subscription/update/{planId}(planId=*{id})}" class="btn btn-primary mr-2">수정</a>
+            <form id="deleteForm" th:action="@{/subscription/delete/{planId}(planId=*{id})}" method="post" style="display: inline;">
+                <button type="submit" onclick="showConfirmAndSubmit(event)" class="btn btn-danger">삭제</button>
             </form>
         </div>
-        <div>
-            <span>사용자 목록</span>
-            <table class="table table-bordered mt-3">
-                <thead>
-                <tr>
-                    <th>CustomerId</th>
-                    <th>시작한 날짜</th>
-                    <th>만료 날짜</th>
-                    <th>PlanId</th>
-                    <th>상태</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="subscription : ${subscriptions}">
-                    <td th:text="${subscription.customer.customerId}">아이디</td>
-                    <td th:text="${subscription.startDate}">시작일</td>
-                    <td th:text="${subscription.endDate}">종료일</td>
-                    <td th:text="${subscription.subscriptionPlan.id}">구독 아이디</td>
-                    <td th:text="${subscription.status}">상태</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+    </div>
+
+    <div>
+        <h6>사용자 목록</h6>
+        <table class="table table-hover table-bordered mt-3">
+            <thead class="thead-light">
+            <tr>
+                <th>CustomerId</th>
+                <th>시작한 날짜</th>
+                <th>만료 날짜</th>
+                <th>PlanId</th>
+                <th>상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${subscriptions.isEmpty()}">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr th:each="subscription : ${subscriptions}">
+                <td th:text="${subscription.customer.customerId}">아이디</td>
+                <td th:text="${subscription.startDate}">시작일</td>
+                <td th:text="${subscription.endDate}">종료일</td>
+                <td th:text="${subscription.subscriptionPlan.id}">구독 아이디</td>
+                <td th:text="${subscription.status}">상태</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
+<div style="height: 100px"></div>
 </body>
+
 <script>
     function showConfirmAndSubmit(event) {
         event.preventDefault();  // 폼 제출을 일시 중지
 
         // 알림 표시
         if (confirm('정말 삭제하시겠습니까?')) {
-            event.target.form.submit();
+            submitFormWithAjax();
         }
+    }
+
+    function submitFormWithAjax() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', document.getElementById('deleteForm').action, true);
+
+        xhr.onload = function() {
+            if (this.status === 400) {
+                let jsonResponse = JSON.parse(this.responseText);
+                alert(jsonResponse.message)
+            } else if (this.status >= 200 && this.status < 400) {
+                // 성공적인 응답 처리 (예: 페이지 새로고침 또는 특정 페이지로 리다이렉트)
+                location.reload();
+            } else {
+                // 다른 에러 처리
+                alert('오류가 발생했습니다. 다시 시도하세요.');
+            }
+        };
+
+        xhr.onerror = function() {
+            alert('요청 중 오류가 발생했습니다. 다시 시도하세요.');
+        };
+
+        xhr.send(new FormData(document.getElementById('deleteForm')));
     }
 </script>
 </html>

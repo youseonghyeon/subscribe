@@ -86,7 +86,7 @@ public class SubscriptionController {
     @GetMapping("/subscription/{subscriptionPlanId}")
     public String subscriptionDetail(Model model, @PathVariable Long subscriptionPlanId) {
         SubscriptionPlan subscribePlan = subscriptionPlanService.getSubscribePlan(subscriptionPlanId);
-        List<Subscription> subscriptions = subscriptionService.getSubscriptions(subscriptionPlanId);
+        List<Subscription> subscriptions = subscriptionService.getSubscriptionsWithCustomer(subscriptionPlanId);
         Long applicationId = subscribePlan.getApplication().getId();
         model.addAttribute("subscriptionPlan", subscribePlan);
         model.addAttribute("subscriptions", subscriptions);
@@ -135,10 +135,6 @@ public class SubscriptionController {
         return "redirect:/";
     }
 
-    @GetMapping("docs/api")
-    public String apiDocs() {
-        return "subscription/api-docs";
-    }
 
 
 }

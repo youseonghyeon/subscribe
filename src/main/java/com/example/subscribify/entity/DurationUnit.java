@@ -1,7 +1,7 @@
 package com.example.subscribify.entity;
 
 public enum DurationUnit {
-    MONTH(1L), YEARLY(12L);
+    MONTH(1L), YEAR(12L);
 
     private long value;
 

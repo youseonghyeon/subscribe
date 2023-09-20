@@ -4,11 +4,12 @@ import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
 @TestComponent
-public class SetupService {
+public class SetupTestUtils {
 
     @Autowired
     private SubscriptionPlanRepository subscriptionPlanRepository;
@@ -20,11 +21,15 @@ public class SetupService {
     private ApplicationRepository applicationRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User createUser() {
         return userRepository.save(User.builder()
                 .id(1L)
                 .username("testUser")
+                .password(passwordEncoder.encode("testPassword"))
+                .email("testEmail@mail.com")
                 .build()
         );
     }
@@ -77,4 +82,5 @@ public class SetupService {
                 .subscriptionPlan(plan)
                 .build());
     }
+
 }
