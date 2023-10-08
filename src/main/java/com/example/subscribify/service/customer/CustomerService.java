@@ -38,6 +38,10 @@ public class CustomerService {
     public Customer getCustomerByCustomerIdAndApplicationId(String customerId, Long applicationId) {
         return customerRepository.findByCustomerIdAndApplicationId(customerId, applicationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer ID"));
+    }
 
+    public Customer getCustomerByCustomerIdAndApplicationIdWithSubscriptions(String customerId, Long applicationId) {
+        return customerRepository.findByCustomerIdAndApplicationId(customerId, applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid customer ID"));
     }
 }

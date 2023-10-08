@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class SubscriptionApiController {
 
@@ -58,37 +59,6 @@ public class SubscriptionApiController {
         return ResponseEntity.ok().build();
     }
 
-//    @PostMapping("/enrollAndActivate")
-//    public ResponseEntity<?> enrollAndActivateSubscription(
-//            @RequestBody EnrollAndActivateSubscriptionRequest request,
-//            @AuthApplication Application application) {
-//
-//        // 사용자 등록
-//        Customer customer = customerService.getOrCreateCustomer(request.getCustomerId(), application.getId());
-//
-//        EnrollSubscriptionServiceRequest serviceRequest =
-//                new EnrollSubscriptionServiceRequest(customer, request.getPlanId());
-//
-//        EnrollSubscriptionServiceResponse serviceResponse =
-//                subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
-//
-//        if (serviceResponse.hasError()) {
-//            return ResponseEntity.badRequest().body(serviceResponse);
-//        }
-//
-//        // 사용자 서비스 활성화
-//        subscriptionService.activateSubscribe(serviceResponse.getSubscriptionId(), application.getApiKey());
-//
-//        return ResponseEntity.ok(serviceResponse);
-//    }
-//
-//    public class EnrollAndActivateSubscriptionRequest {
-//        private String customerId;
-//        private String planId;
-//
-//        // getters, setters, etc.
-//    }
-
 
     @GetMapping("/customers")
     public ResponseEntity<List<CustomerResult>> listAllCustomers(@AuthApplication Application application) {
@@ -103,17 +73,23 @@ public class SubscriptionApiController {
     }
 
     @GetMapping("/customers/{customerId}")
-    public ResponseEntity<Customer> getCustomerDetails(
+    public ResponseEntity<String> getCustomerDetails(
             @PathVariable("customerId") String customerId,
             @AuthApplication Application application) {
 
-        Customer customer = customerService.getCustomerByCustomerIdAndApplicationId(customerId, application.getId());
+        Customer customer = customerService.getCustomerByCustomerIdAndApplicationIdWithSubscriptions(customerId, application.getId());
 
         if (customer == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(customer);
+
+        List<Subscription> subscriptions = customer.getSubscriptions();
+        subscriptions.stream().map()
+
+        return ResponseEntity.ok(customer.getCustomerId());
     }
+
+    private static class
 
     @GetMapping("/plans")
     public ResponseEntity<List<SubscriptionPlanResult>> getSubscriptionPlans(@AuthApplication Application application) {

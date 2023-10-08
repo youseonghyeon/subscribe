@@ -25,6 +25,9 @@ public class AuthApplicationArgumentResolver implements HandlerMethodArgumentRes
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String auth = webRequest.getHeader("Authorization");
+        if (auth != null) {
+            auth = auth.replace("Bearer ", "");
+        }
         return applicationRepository.findByApiKey(auth)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid API Key"));
         // 어려웠던 부분.

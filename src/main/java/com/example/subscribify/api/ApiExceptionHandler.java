@@ -1,6 +1,5 @@
 package com.example.subscribify.api;
 
-import com.example.subscribify.api.SubscriptionApiController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
