@@ -62,4 +62,8 @@ public class Subscription extends BaseTimeEntity {
         this.startDate = LocalDateTime.now();
         this.endDate = LocalDateTime.now().plusMonths(this.durationMonth);
     }
+
+    public void expire() {
+        status = SubscriptionStatus.EXPIRED;
+    }
 }

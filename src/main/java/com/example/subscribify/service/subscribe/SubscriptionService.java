@@ -6,10 +6,13 @@ import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.repository.SubscriptionRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,7 +21,9 @@ public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
-    private final ApplicationRepository applicationRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * 구독 서비스 구매
@@ -84,5 +89,21 @@ public class SubscriptionService {
 
     public List<Subscription> getSubscriptionsWithCustomer(Long planId) {
         return subscriptionRepository.findAllWithCustomerBySubscriptionPlanId(planId);
+    }
+
+    /**
+     * 만기가 되는 구독 서비스를 찾아서 만료 처리
+     * 대용량 처리이므로 entityManger를 사용하여 flush, clear 처리
+     * @param currentDateTime
+     * @return
+     */
+    @Transactional
+    public Integer expireSubscriptions(LocalDateTime currentDateTime) {
+        List<Subscription> expiredSubscriptions =
+                subscriptionRepository.findAllByStatusAndEndDateBefore(SubscriptionStatus.ACTIVE, currentDateTime);
+        expiredSubscriptions.forEach(Subscription::expire);
+        entityManager.flush();
+        entityManager.clear();
+        return expiredSubscriptions.size();
     }
 }
