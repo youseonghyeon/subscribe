@@ -5,7 +5,9 @@ import com.example.subscribify.dto.api.*;
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceRequest;
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceResponse;
 import com.example.subscribify.entity.*;
+import com.example.subscribify.repository.SubscriptionRepository;
 import com.example.subscribify.service.customer.CustomerService;
+import com.example.subscribify.service.payment.PaymentService;
 import com.example.subscribify.service.subscribe.SubscriptionService;
 import com.example.subscribify.service.subscriptionplan.SubscriptionPlanService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ public class SubscriptionApiController {
     private final CustomerService customerService;
     private final SubscriptionService subscriptionService;
     private final SubscriptionPlanService subscriptionPlanService;
+    private final PaymentService paymentService;
+    private final SubscriptionRepository subscriptionRepository;
 
     /**
      * 구독 등록 신청 api
@@ -63,7 +67,7 @@ public class SubscriptionApiController {
      * @param application
      * @return
      */
-    @PostMapping("/activate")
+    @PostMapping("/activate-pay")
     public ResponseEntity<Void> activateSubscription(
             @RequestBody ActivateSubscriptionRequest request,
             @AuthApplication Application application) {
@@ -71,6 +75,21 @@ public class SubscriptionApiController {
         subscriptionService.activateSubscribe(request.getSubscriptionId(), application.getApiKey());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/activate")
+    public ResponseEntity<Void> activateSubscriptionAndPayment(
+            @RequestBody ActivateSubscriptionRequest request,
+            @AuthApplication Application application) {
+
+        subscriptionService.activateSubscribe(request.getSubscriptionId(), application.getApiKey());
+        Subscription subscription = subscriptionRepository.findById(request.getSubscriptionId()).orElseThrow(() -> new IllegalStateException("Invalid subscription ID: " + request.getSubscriptionId()));
+
+        paymentService.pay(subscription.getCustomer().getCustomerId(), subscription.getSubscriptionPlan().getId(),
+                subscription.getSubscriptionPlan().getPrice(), PaymentStatus.COMPLETED);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 
     /**

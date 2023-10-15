@@ -3,7 +3,6 @@ package com.example.subscribify.service.subscribe;
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceResponse;
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceRequest;
 import com.example.subscribify.entity.*;
-import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.repository.SubscriptionRepository;
 import jakarta.persistence.EntityManager;
@@ -105,5 +104,15 @@ public class SubscriptionService {
         entityManager.flush();
         entityManager.clear();
         return expiredSubscriptions.size();
+    }
+
+    @Transactional
+    public Integer deleteUnpaidSubscriptions(LocalDateTime localDate) {
+        List<Subscription> unpaidSubscriptions =
+                subscriptionRepository.findAllByStatusAndCreatedAtBefore(SubscriptionStatus.PENDING, localDate);
+        subscriptionRepository.deleteAll(unpaidSubscriptions);
+        entityManager.flush();
+        entityManager.clear();
+        return unpaidSubscriptions.size();
     }
 }

@@ -1,68 +1,153 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
-<head th:replace="~{layout:: globalHead}">
+<head>
     <title>구독 서비스 API 사용 가이드</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            border-bottom: 2px solid #eeeeee;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #333333;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+        }
+
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #eeeeee;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
 
-<div th:replace="~{common :: header}"></div>
-
 <div class="container mt-5">
     <h1 class="text-center mb-5">구독 서비스 API 사용 가이드</h1>
 
-    <h2>1. 구독 Customer 등록</h2>
+    <!-- 1. 구독 등록 -->
+    <h2>1. 구독 등록</h2>
     <h3>Endpoint:</h3>
-    <code>POST /api/subscription/customer</code>
+    <code>POST /api/enroll</code>
 
     <h3>Request Body Example:</h3>
     <button onclick="copyCode('requestBodyExample1')">Copy</button>
     <pre id="requestBodyExample1">
 {
   "customerId": "123456",
-  "email": "example@example.com",
-  "name": "John Doe"
+  "planId": "plan_001"
 }
     </pre>
 
     <h3>Response:</h3>
-    <button onclick="copyCode('requestBodyExample2')">Copy</button>
-    <pre id="requestBodyExample2">
+    <button onclick="copyCode('responseBodyExample1')">Copy</button>
+    <pre id="responseBodyExample1">
 {
   "status": "success",
-  "message": "Customer registered successfully."
+  "message": "Subscription enrolled successfully."
 }
     </pre>
 
+    <!-- 2. 구독 활성화 -->
     <h2>2. 구독 활성화</h2>
     <h3>Endpoint:</h3>
-    <code>POST /api/subscription/activate</code>
+    <code>POST /api/activate</code>
 
-    <h3>Request Body Example:</h3>
-    <button onclick="copyCode('requestBodyExample3')">Copy</button>
-    <pre id="requestBodyExample3">
-{
-  "customerId": "123456",
-  "subscriptionPlanId": "plan_001"
-}
-    </pre>
+    <!-- 이 부분은 기존과 동일하므로 생략 -->
+
+    <!-- 3. 고객사의 모든 고객 정보 조회 -->
+    <h2>3. 모든 고객 정보 조회</h2>
+    <h3>Endpoint:</h3>
+    <code>GET /api/customers</code>
 
     <h3>Response:</h3>
-    <button onclick="copyCode('requestBodyExample4')">Copy</button>
-    <pre id="requestBodyExample4">
+    <button onclick="copyCode('responseBodyExample2')">Copy</button>
+    <pre id="responseBodyExample2">
+[
+  {
+    "id": 1,
+    "customerId": "123456",
+    "name": "John Doe",
+    "email": "example@example.com"
+  },
+  ...
+]
+    </pre>
+
+    <!-- 4. 고객사의 특정 고객 정보 조회 -->
+    <h2>4. 특정 고객 정보 조회</h2>
+    <h3>Endpoint:</h3>
+    <code>GET /api/customers/{customerId}</code>
+
+    <h3>Response:</h3>
+    <button onclick="copyCode('responseBodyExample3')">Copy</button>
+    <pre id="responseBodyExample3">
 {
-  "status": "success",
-  "message": "Subscription activated successfully."
+  "id": 1,
+  "customerId": "123456",
+  "name": "John Doe",
+  "subscriptions": [
+    {
+      "id": "sub_001",
+      "planName": "Premium Plan",
+      "status": "active",
+      ...
+    },
+    ...
+  ]
 }
     </pre>
 
-    <!-- 여기에 다른 API 정보를 계속 추가할 수 있습니다. -->
+    <!-- 5. 구독 Plan 정보 조회 -->
+    <h2>5. 구독 Plan 정보 조회</h2>
+    <h3>Endpoint:</h3>
+    <code>GET /api/plans</code>
+
+    <h3>Response:</h3>
+    <button onclick="copyCode('responseBodyExample4')">Copy</button>
+    <pre id="responseBodyExample4">
+[
+  {
+    "id": "plan_001",
+    "name": "Basic Plan",
+    "price": 9.99,
+    ...
+  },
+  ...
+]
+    </pre>
 
 </div>
 
 </body>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     function copyCode(elementId) {
         var copyText = document.getElementById(elementId).innerText;
@@ -75,5 +160,6 @@
         alert("코드가 복사되었습니다.");
     }
 </script>
+
 
 </html>

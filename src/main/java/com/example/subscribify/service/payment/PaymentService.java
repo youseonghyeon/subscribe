@@ -9,12 +9,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final SubscriptionService subscriptionService;
+
+    public void pay(String uerId, Long productId, Long amount, PaymentStatus status) {
+        Payment payment = Payment.builder()
+                .transactionId(UUID.randomUUID().toString())
+                .userId(uerId)
+                .productId(productId)
+                .amount(amount)
+                .status(status)
+                .build();
+        paymentRepository.save(payment);
+    }
+
 
     /**
      * 결제 서비스
@@ -48,5 +63,9 @@ public class PaymentService {
     public void regularPayment() {
         // 정기 결제
         throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    public List<Payment> getPaymentLog(Long subscriptionPlanId) {
+        return paymentRepository.findAllByProductId(subscriptionPlanId);
     }
 }

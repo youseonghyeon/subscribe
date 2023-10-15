@@ -36,6 +36,10 @@
         <button class="btn btn-secondary" style="width: 200px">옵션 변경</button>
     </div>
 
+    <div class="card mb-3 p-4 shadow-sm">
+        <a th:href="@{/payment/detail}" class="btn btn-secondary" style="width: 200px">결제 내역</a>
+    </div>
+
 
     <div class="card mb-3 p-4 shadow-sm">
         <a th:href="@{/subscription/enroll/{applicationId}(applicationId=${app.id})}" class="btn btn-secondary" style="width: 200px">Plan 등록하기</a> <!-- 여기를 수정 -->

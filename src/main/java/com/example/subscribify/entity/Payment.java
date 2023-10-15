@@ -20,7 +20,7 @@ public class Payment extends BaseTimeEntity {
 
     private String userId;
 
-    private String productId;
+    private Long productId;
 
     private Long amount;
 

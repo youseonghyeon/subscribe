@@ -5,6 +5,7 @@ import com.example.subscribify.entity.SubscriptionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     List<Subscription> findAllWithCustomerBySubscriptionPlanId(Long planId);
 
     List<Subscription> findAllByStatusAndEndDateBefore(SubscriptionStatus status, LocalDateTime endDate);
+
+    List<Subscription> findAllByStatusAndCreatedAtBefore(SubscriptionStatus subscriptionStatus, LocalDateTime localDate);
 }
