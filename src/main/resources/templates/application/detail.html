@@ -29,15 +29,12 @@
     </div>
 
     <div class="card mb-3 p-4 shadow-sm">
-        <div class="mb-3">
-            <strong>결제 시스템 연동 유무:</strong> <span th:text="${paymentSystemStatus}">예</span><br>
-            <strong>수익:</strong> <span th:text="${revenue}">1000</span><br>
-        </div>
-        <button class="btn btn-secondary" style="width: 200px">옵션 변경</button>
+        <a th:href="@{/applications/{applicationId}/options(applicationId=${app.getId()})}" class="btn btn-secondary" style="width: 200px">옵션 변경</a>
     </div>
 
     <div class="card mb-3 p-4 shadow-sm">
-        <a th:href="@{/payment/detail}" class="btn btn-secondary" style="width: 200px">결제 내역</a>
+        <p>total Amount: <span th:text="${totalAmount}"></span></p>
+        <a th:href="@{/history/{applicationId}(applicationId=${app.getId()})}" class="btn btn-secondary" style="width: 200px">결제 내역</a>
     </div>
 
 

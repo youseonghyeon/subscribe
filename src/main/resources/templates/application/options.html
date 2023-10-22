@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout:: globalHead}">
+    <title>구독 서비스 설정</title>
+</head>
+
+<body>
+
+<div th:replace="~{common :: header}"></div>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Application 등록</h1>
+<!--    <form th:action="@{/applications/option}" method="post" th:object="${createApplicationDto}" class="border p-5 rounded shadow-sm bg-white">-->
+    <form th:action="@{/applications/{applicationId}/options(applicationId=${app.getId()})}" th:object="${app}" method="post" class="border p-5 rounded shadow-sm bg-white">
+        <!-- 앱 아이콘 -->
+        <div class="form-group">
+            <label for="duplicatePaymentOption">중복 구매시</label>
+            <select name="duplicatePaymentOption" id="duplicatePaymentOption">
+                <option th:each="option : ${T(com.example.subscribify.entity.DuplicatePaymentOption).values()}"
+                        th:value="${option}"
+                        th:text="${option.getDescription()}"
+                        th:selected="${app.getDuplicatePaymentOption()}">
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-3">등록하기</button>
+    </form>
+</div>
+</body>
+</html>

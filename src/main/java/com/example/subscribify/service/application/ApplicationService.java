@@ -1,9 +1,9 @@
 package com.example.subscribify.service.application;
 
 import com.example.subscribify.config.security.ApiKeyGenerator;
+import com.example.subscribify.dto.UpdateApplicationDto;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
-import com.example.subscribify.entity.Customer;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.repository.CustomerRepository;
@@ -36,6 +36,12 @@ public class ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
+    public void authCheck(Application application, User user) {
+        if (!application.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Access is denied");
+        }
+    }
+
     public List<Application> getMyApplications(Long userId) {
         return applicationRepository.findByUserId(userId);
     }
@@ -57,5 +63,8 @@ public class ApplicationService {
     }
 
 
-
+    @Transactional
+    public void updateOptions(Application application, UpdateApplicationDto updateApplicationDto) {
+        application.updateOptions(updateApplicationDto.getDuplicatePaymentOption());
+    }
 }

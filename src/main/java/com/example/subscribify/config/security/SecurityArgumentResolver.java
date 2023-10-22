@@ -1,7 +1,6 @@
 package com.example.subscribify.config.security;
 
-import com.example.subscribify.config.security.CustomUserDetails;
-import com.example.subscribify.domain.SessionUser;
+import com.example.subscribify.domain.AuthUser;
 import com.example.subscribify.entity.User;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -22,7 +21,7 @@ public class SecurityArgumentResolver implements HandlerMethodArgumentResolver {
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(SessionUser.class) && parameter.getGenericParameterType().equals(User.class);
+        return parameter.hasParameterAnnotation(AuthUser.class) && parameter.getGenericParameterType().equals(User.class);
     }
 
     /**

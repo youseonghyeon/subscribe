@@ -19,10 +19,11 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final SubscriptionService subscriptionService;
 
-    public void pay(String uerId, Long productId, Long amount, PaymentStatus status) {
+    public void pay(String uerId, Long applicationId, Long productId, Long amount, PaymentStatus status) {
         Payment payment = Payment.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .userId(uerId)
+                .applicationId(applicationId)
                 .productId(productId)
                 .amount(amount)
                 .status(status)
@@ -66,6 +67,6 @@ public class PaymentService {
     }
 
     public List<Payment> getPaymentLog(Long subscriptionPlanId) {
-        return paymentRepository.findAllByProductId(subscriptionPlanId);
+        return paymentRepository.findAllByApplicationId(subscriptionPlanId);
     }
 }

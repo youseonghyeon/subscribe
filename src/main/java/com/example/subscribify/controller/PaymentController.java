@@ -10,6 +10,7 @@ import com.example.subscribify.service.subscribe.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,9 +36,10 @@ public class PaymentController {
         return "redirect:/";
     }
 
-    @GetMapping("/history/{subscriptionPlanId}")
-    public String getPaymentHistory(@PathVariable Long subscriptionPlanId) {
-        List<Payment> payments = paymentService.getPaymentLog(subscriptionPlanId);
+    @GetMapping("/history/{applicationId}")
+    public String getPaymentHistory(@PathVariable Long applicationId, Model model) {
+        List<Payment> payments = paymentService.getPaymentLog(applicationId);
+        model.addAttribute("payments", payments);
         return "application/payment-history";
     }
 }

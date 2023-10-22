@@ -1,10 +1,13 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.domain.SessionUser;
+import com.example.subscribify.domain.AuthUser;
+import com.example.subscribify.dto.UpdateApplicationDto;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
+import com.example.subscribify.entity.DuplicatePaymentOption;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.repository.PaymentRepository;
 import com.example.subscribify.service.application.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,21 +24,51 @@ public class ApplicationController {
 
     private final ApplicationService applicationService;
     private final ApplicationRepository applicationRepository;
+    private final PaymentRepository paymentRepository;
 
     @GetMapping("/applications")
-    public String applicationListForm(@SessionUser User user, Model model) {
+    public String applicationListForm(@AuthUser User user, Model model) {
         List<Application> applications = applicationService.getMyApplications(user.getId());
         model.addAttribute("applications", applications);
         return "application/list";
     }
 
     @GetMapping("/applications/{applicationId}")
-    public String applicationDetailForm(@PathVariable Long applicationId, Model model) {
+    public String applicationDetailForm(@PathVariable Long applicationId, @AuthUser User user, Model model) {
         Application application = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
+        application.authCheck(user.getId());
+
+        Long totalAmount = paymentRepository.sumAmountByApplicationId(applicationId);
+
         model.addAttribute("app", application);
+        model.addAttribute("totalAmount", totalAmount);
         model.addAttribute("subscriptionPlans", application.getSubscriptionPlans());
         return "application/detail";
+    }
+
+    @GetMapping("/applications/{applicationId}/options")
+    public String optionsUpdateForm(@PathVariable Long applicationId, @AuthUser User user, Model model) {
+        Application application = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
+        application.authCheck(user.getId());
+
+        model.addAttribute("app", application);
+        return "application/options";
+    }
+
+    @PostMapping("/applications/{applicationId}/options")
+    public String optionsUpdate(@PathVariable Long applicationId,
+                                @AuthUser User user,
+                                @RequestParam("duplicatePaymentOption") DuplicatePaymentOption duplicatePaymentOption) {
+        Application application = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
+        application.authCheck(user.getId());
+
+        UpdateApplicationDto updateApplicationDto = new UpdateApplicationDto(duplicatePaymentOption);
+
+        applicationService.updateOptions(application, updateApplicationDto);
+        return "redirect:/applications/" + applicationId;
     }
 
     @GetMapping("/applications/enroll")
@@ -45,14 +78,14 @@ public class ApplicationController {
     }
 
     @PostMapping("/applications/enroll")
-    public String enrollApplication(@ModelAttribute CreateApplicationDto createApplicationDto, @SessionUser User user) {
+    public String enrollApplication(@ModelAttribute CreateApplicationDto createApplicationDto, @AuthUser User user) {
         applicationService.createApplication(createApplicationDto, user);
         return "redirect:/applications";
     }
 
 
     @PostMapping("/applications/keys/generate")
-    public String generateApiKey(@RequestParam("applicationId") Long applicationId, @SessionUser User user, Model model) {
+    public String generateApiKey(@RequestParam("applicationId") Long applicationId, @AuthUser User user, Model model) {
         Application updatedApplication = applicationService.updateKeys(applicationId, user.getId());
         model.addAttribute("app", updatedApplication);
         return "redirect:/applications/" + applicationId;

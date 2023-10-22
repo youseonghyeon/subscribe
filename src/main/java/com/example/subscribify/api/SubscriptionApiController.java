@@ -53,6 +53,8 @@ public class SubscriptionApiController {
         EnrollSubscriptionServiceResponse serviceResponse =
                 subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
 
+
+
         if (serviceResponse.hasError()) {
             return ResponseEntity.badRequest().body(serviceResponse);
         }
@@ -84,7 +86,7 @@ public class SubscriptionApiController {
         subscriptionService.activateSubscribe(request.getSubscriptionId(), application.getApiKey());
         Subscription subscription = subscriptionRepository.findById(request.getSubscriptionId()).orElseThrow(() -> new IllegalStateException("Invalid subscription ID: " + request.getSubscriptionId()));
 
-        paymentService.pay(subscription.getCustomer().getCustomerId(), subscription.getSubscriptionPlan().getId(),
+        paymentService.pay(subscription.getCustomer().getCustomerId(), application.getId(), subscription.getSubscriptionPlan().getId(),
                 subscription.getSubscriptionPlan().getPrice(), PaymentStatus.COMPLETED);
         return ResponseEntity.ok().build();
     }
