@@ -25,6 +25,7 @@ public class ApplicationService {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
 
+
     @Transactional
     public Long createApplication(CreateApplicationDto createApplicationDto, User user) {
         Application application = Application.builder()

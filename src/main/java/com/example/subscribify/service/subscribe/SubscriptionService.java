@@ -1,60 +1,80 @@
 package com.example.subscribify.service.subscribe;
 
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceResponse;
-import com.example.subscribify.dto.service.EnrollSubscriptionServiceRequest;
 import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.repository.SubscriptionRepository;
+import com.example.subscribify.service.customer.CustomerService;
+import com.example.subscribify.service.subscribe.options.AllowDuplicationStrategy;
+import com.example.subscribify.service.subscribe.options.DisallowDuplicationStrategy;
+import com.example.subscribify.service.subscribe.options.SubscriptionStrategy;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.example.subscribify.entity.DuplicatePaymentOption.*;
 
 @Service
-@RequiredArgsConstructor
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
+    private final CustomerService customerService;
+    private final Map<DuplicatePaymentOption, SubscriptionStrategy> strategies;
+
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionPlanRepository subscriptionPlanRepository, CustomerService customerService) {
+        this.subscriptionRepository = subscriptionRepository;
+        this.subscriptionPlanRepository = subscriptionPlanRepository;
+        this.customerService = customerService;
+        this.strategies = new HashMap<>();
+        strategies.put(DISALLOW_DUPLICATION, new DisallowDuplicationStrategy());
+        strategies.put(ALLOW_DUPLICATION, new AllowDuplicationStrategy());
+    }
 
     @PersistenceContext
     private EntityManager entityManager;
 
     /**
-     * 구독 서비스 구매
      *
-     * @param serviceRequest 구매자 정보, 구독 Plan 정보, API Key, Secret Key
-     * @return 구독 구매 ID, 단 현재 단계 에서는 구독이 시작 되지 않음 (결제가 되면 구독이 시작됨)
+     * @param customerId 구매자 id (String)
+     * @param planId 구매할 plan id (Long)
+     * @param authorization API Key (String)
+     * @param option 중복 결제 옵션 (DuplicatePaymentOption)
+     * @return 구독 ID (Long)
      */
     @Transactional
-    public EnrollSubscriptionServiceResponse enrollSubscribe(EnrollSubscriptionServiceRequest serviceRequest, String authorization) {
+    public EnrollSubscriptionServiceResponse enrollSubscribe(
+            String customerId,
+            Long planId,
+            String authorization,
+            DuplicatePaymentOption option) {
 
-        // 구독 Plan을 가져와서
-        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(serviceRequest.getPlanId())
-                .orElseThrow(() -> new IllegalStateException("Invalid subscription plan ID: " + serviceRequest.getPlanId()));
+        // 구독 Plan을 가져옴
+        SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
+                .orElseThrow(() -> new IllegalStateException("Invalid subscription plan ID: " + planId));
+        Application application = subscriptionPlan.getApplication();
 
-        if (!authorization.equals(subscriptionPlan.getApplication().getApiKey())) {
+        // API Key를 확인
+        if (!authorization.equals(application.getApiKey())) {
             return new EnrollSubscriptionServiceResponse("Invalid Authorization");
         }
 
-        // plan 정보와 user 정보를 저장
-        Subscription subscription = Subscription.builder()
-                .subscribeName(subscriptionPlan.getPlanName())
-                .status(SubscriptionStatus.PENDING)
-                .price(subscriptionPlan.getPrice())
-                .durationMonth(subscriptionPlan.getDuration())
-                .discountedPrice(subscriptionPlan.getDiscountedPrice())
-                .subscriptionPlan(subscriptionPlan)
-                .customer(serviceRequest.getCustomer())
-                .build();
+        Customer customer = customerService.getOrCreateCustomer(customerId, application.getId());
 
-        subscriptionRepository.save(subscription);
+        // 중복 구독이 가능/ 불가능
+        SubscriptionStrategy strategy = strategies.get(option);
 
-        return new EnrollSubscriptionServiceResponse(subscription.getId());
+        // 등록
+        Subscription newSubscription = strategy.apply(customer, subscriptionPlan);
+
+        subscriptionRepository.save(newSubscription);
+        return new EnrollSubscriptionServiceResponse(newSubscription.getId());
     }
 
     @Transactional
@@ -93,6 +113,7 @@ public class SubscriptionService {
     /**
      * 만기가 되는 구독 서비스를 찾아서 만료 처리
      * 대용량 처리이므로 entityManger를 사용하여 flush, clear 처리
+     *
      * @param currentDateTime
      * @return
      */

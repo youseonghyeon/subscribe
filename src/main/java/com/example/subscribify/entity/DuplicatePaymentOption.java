@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public enum DuplicatePaymentOption {
 
-    NO_DUPLICATE("noDuplicate", "중복 결제 불가능"),
-    ALLOW_DUPLICATE("allowDuplicate", "중복 결제 허용"),
-    EXTEND_DURATION("extendDuration", "중복 결제 시 기간 연장");
+    DISALLOW_DUPLICATION("disallowDuplication", "중복 결제 불가능"),
+    ALLOW_DUPLICATION("allowDuplication", "중복 결제 허용");
+//    EXTEND_ON_DUPLICATION("extendOnDuplication", "중복 결제 시 기간 연장");
 
     private final String code;
     private final String description;

@@ -38,7 +38,7 @@ class SubscriptionServiceTest {
         EnrollSubscriptionServiceRequest serviceRequest = new EnrollSubscriptionServiceRequest(customer, subscriptionPlan.getId());
 
         //when
-        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
+        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey(), optionProcessor);
 
         // then
         Subscription subscription = subscriptionRepository.findById(serviceResponse.getSubscriptionId())

@@ -2,7 +2,6 @@ package com.example.subscribify.api;
 
 import com.example.subscribify.domain.AuthApplication;
 import com.example.subscribify.dto.api.*;
-import com.example.subscribify.dto.service.EnrollSubscriptionServiceRequest;
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceResponse;
 import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.SubscriptionRepository;
@@ -44,22 +43,29 @@ public class SubscriptionApiController {
     public ResponseEntity<EnrollSubscriptionServiceResponse> enrollSubscription(
             @RequestBody EnrollSubscriptionRequest request,
             @AuthApplication Application application) {
-
-        Customer customer = customerService.getOrCreateCustomer(request.getCustomerId(), application.getId());
-
-        EnrollSubscriptionServiceRequest serviceRequest =
-                new EnrollSubscriptionServiceRequest(customer, request.getPlanId());
-
-        EnrollSubscriptionServiceResponse serviceResponse =
-                subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey());
+        // reasonable 한 값들만 등록이 되도록 하고 그렇지 않은 값들은 예외를 발생시킨다.
+        // 1. customer 을 생성하고, 만약 기존에 있던 고객이면 그 고객을 가져온다.
 
 
+
+
+        // 2. subscription 을 생성하고 등록한다. (activate 는 결제 로직에서 처리한다.)
+        // application Option 에 따라서 중복 등록을 어떻게 처리할지 나눈다.
+        // 전략 패턴을 사용하여 처리함. (새로운 옵션이 추가되더라도 코드 수정이 필요 없도록 하기 위함)
+        // 만약 중복 처리 말고 다른 option이 추가되면 데코레이터 패턴을 이용해서 추가하자
+
+        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(request.getCustomerId(), request.getPlanId(), application.getApiKey(), application.getDuplicatePaymentOption());
 
         if (serviceResponse.hasError()) {
             return ResponseEntity.badRequest().body(serviceResponse);
         }
 
         return ResponseEntity.ok(serviceResponse);
+    }
+
+    @PostMapping("/eroll-and-pay")
+    public ResponseEntity<EnrollSubscriptionServiceResponse> enrollAndPaySubscription() {
+        return null;
     }
 
     /**
@@ -90,8 +96,6 @@ public class SubscriptionApiController {
                 subscription.getSubscriptionPlan().getPrice(), PaymentStatus.COMPLETED);
         return ResponseEntity.ok().build();
     }
-
-
 
 
     /**
@@ -151,7 +155,6 @@ public class SubscriptionApiController {
                 subscriptionPlans.stream().map(SubscriptionPlanInfo::new).collect(Collectors.toList());
         return ResponseEntity.ok(results);
     }
-
 
 
 }

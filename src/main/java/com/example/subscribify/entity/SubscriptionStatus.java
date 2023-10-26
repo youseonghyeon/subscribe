@@ -3,6 +3,8 @@ package com.example.subscribify.entity;
 public enum SubscriptionStatus {
 
     ACTIVE,       // 구독이 활성화된 상태
+    ACTIVE_TRIAL, // 구독이 활성화된 상태이면서 체험 기간 중인 상태
+    ACTIVE_CANCELLATION_SCHEDULED, // 구독이 활성화된 상태이면서 취소 예약된 상태
     INACTIVE,     // 구독이 비활성화된 상태
     PENDING,      // 구독 활성화 대기 중인 상태
     CANCELED,     // 구독이 취소된 상태

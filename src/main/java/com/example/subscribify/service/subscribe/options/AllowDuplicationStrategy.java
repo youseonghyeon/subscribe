@@ -1,0 +1,29 @@
+package com.example.subscribify.service.subscribe.options;
+
+import com.example.subscribify.entity.Customer;
+import com.example.subscribify.entity.Subscription;
+import com.example.subscribify.entity.SubscriptionPlan;
+import com.example.subscribify.entity.SubscriptionStatus;
+
+import java.time.LocalDateTime;
+
+public class AllowDuplicationStrategy implements SubscriptionStrategy {
+    @Override
+    public Subscription apply(Customer customer, SubscriptionPlan subscriptionPlan) {
+        Subscription subscription = Subscription.builder()
+                .subscribeName(subscriptionPlan.getPlanName())
+                .durationMonth(subscriptionPlan.getDuration())
+                .status(SubscriptionStatus.PENDING)
+                .price(subscriptionPlan.getPrice())
+                .discountRate(subscriptionPlan.getDiscount())
+                .discountedPrice(subscriptionPlan.getDiscountedPrice())
+                .customer(customer)
+                .subscriptionPlan(subscriptionPlan)
+                .build();
+        if (subscriptionPlan.getPrice() <= 0) {
+            subscription.activate();
+        }
+        return subscription;
+    }
+
+}
