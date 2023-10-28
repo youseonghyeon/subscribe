@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>구독 서비스 API 사용 가이드</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -43,25 +42,28 @@
         }
     </style>
 </head>
-
 <body>
 <div th:replace="~{common :: header}"></div>
-
 
 <div class="container mt-5">
     <h1 class="text-center mb-5">구독 서비스 API 사용 가이드</h1>
 
     <!-- 1. 구독 등록 -->
     <h2>1. 구독 등록</h2>
+    <p>이 API는 고객의 구독을 등록하는 데 사용됩니다. 고객 ID와 플랜 ID를 통해 구독을 생성하며, 고객이 이미 존재하는 경우 기존 고객 정보를 사용합니다. 고객 ID와 플랜 ID는 필수
+        항목입니다.</p>
     <h3>Endpoint:</h3>
     <code>POST /api/enroll</code>
+
+    <!-- 요청 및 응답 예시 -->
+
 
     <h3>Request Body Example:</h3>
     <button onclick="copyCode('requestBodyExample1')">Copy</button>
     <pre id="requestBodyExample1">
 {
-  "customerId": "123456",
-  "planId": "plan_001"
+  "customerId": "kim123",
+  "planId": 1
 }
     </pre>
 
@@ -69,8 +71,16 @@
     <button onclick="copyCode('responseBodyExample1')">Copy</button>
     <pre id="responseBodyExample1">
 {
-  "status": "success",
-  "message": "Subscription enrolled successfully."
+  "errorMessage": null,
+  "subscriptionId": 652
+}
+    </pre>
+
+    <h3>Error Response:</h3>
+    <pre>
+{
+  "errorMessage": "Invalid customer ID or plan ID",
+  "errorCode": "INVALID_REQUEST"
 }
     </pre>
 
@@ -78,8 +88,6 @@
     <h2>2. 구독 활성화</h2>
     <h3>Endpoint:</h3>
     <code>POST /api/activate</code>
-
-    <!-- 이 부분은 기존과 동일하므로 생략 -->
 
     <!-- 3. 고객사의 모든 고객 정보 조회 -->
     <h2>3. 모든 고객 정보 조회</h2>
@@ -145,11 +153,6 @@
 
 </div>
 
-</body>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     function copyCode(elementId) {
         var copyText = document.getElementById(elementId).innerText;
@@ -159,9 +162,17 @@
         textarea.select();
         document.execCommand("copy");
         document.body.removeChild(textarea);
-        alert("코드가 복사되었습니다.");
+
+        // 복사 완료 메시지 표시
+        var originalText = document.querySelector(`button[onclick='copyCode("${elementId}")']`).innerText;
+        document.querySelector(`button[onclick='copyCode("${elementId}")']`).innerText = "복사됨!";
+
+        setTimeout(() => {
+            document.querySelector(`button[onclick='copyCode("${elementId}")']`).innerText = originalText;
+        }, 1500);
     }
 </script>
 
-
+</body>
 </html>
+

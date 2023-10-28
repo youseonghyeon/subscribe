@@ -16,7 +16,7 @@ public class DisallowDuplicationStrategy implements SubscriptionStrategy {
                 .anyMatch(subscription ->
                         subscription.getSubscriptionPlan().equals(subscriptionPlan) &&
                                 subscription.getStatus().equals(SubscriptionStatus.ACTIVE))) {
-            throw new UnsupportedOperationException("Customer already has an active subscription.");
+            throw new RuntimeException("Customer already has an active subscription.");
         }
 
         Subscription subscription = Subscription.builder()

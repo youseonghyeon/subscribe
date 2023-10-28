@@ -46,9 +46,6 @@ public class SubscriptionApiController {
         // reasonable 한 값들만 등록이 되도록 하고 그렇지 않은 값들은 예외를 발생시킨다.
         // 1. customer 을 생성하고, 만약 기존에 있던 고객이면 그 고객을 가져온다.
 
-
-
-
         // 2. subscription 을 생성하고 등록한다. (activate 는 결제 로직에서 처리한다.)
         // application Option 에 따라서 중복 등록을 어떻게 처리할지 나눈다.
         // 전략 패턴을 사용하여 처리함. (새로운 옵션이 추가되더라도 코드 수정이 필요 없도록 하기 위함)

@@ -17,4 +17,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleUsernameAlreadyExistsException(UserAlreadyExistsException e) {
         return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleIllegalArgumentException(IllegalArgumentException e) {
+        return "exception/access-denied";
+    }
 }

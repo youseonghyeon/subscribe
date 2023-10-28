@@ -29,11 +29,12 @@
     </div>
 
     <div class="card mb-3 p-4 shadow-sm">
+        <p>duplicate option: <span th:text="${app.getDuplicatePaymentOption()}"></span></p>
         <a th:href="@{/applications/{applicationId}/options(applicationId=${app.getId()})}" class="btn btn-secondary" style="width: 200px">옵션 변경</a>
     </div>
 
     <div class="card mb-3 p-4 shadow-sm">
-        <p>total Amount: <span th:text="${totalAmount}"></span></p>
+        <p th:if="${totalAmount} != null" >total Amount: <span th:text="${totalAmount}"></span></p>
         <a th:href="@{/history/{applicationId}(applicationId=${app.getId()})}" class="btn btn-secondary" style="width: 200px">결제 내역</a>
     </div>
 

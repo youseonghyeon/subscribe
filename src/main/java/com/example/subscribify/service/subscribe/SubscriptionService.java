@@ -13,6 +13,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +42,10 @@ public class SubscriptionService {
     private EntityManager entityManager;
 
     /**
-     *
-     * @param customerId 구매자 id (String)
-     * @param planId 구매할 plan id (Long)
+     * @param customerId    구매자 id (String)
+     * @param planId        구매할 plan id (Long)
      * @param authorization API Key (String)
-     * @param option 중복 결제 옵션 (DuplicatePaymentOption)
+     * @param option        중복 결제 옵션 (DuplicatePaymentOption)
      * @return 구독 ID (Long)
      */
     @Transactional
@@ -135,5 +135,11 @@ public class SubscriptionService {
         entityManager.flush();
         entityManager.clear();
         return unpaidSubscriptions.size();
+    }
+
+    public List<Subscription> getReachedExpireDaySubscriptions(LocalDate today) {
+        LocalDateTime start = today.plusDays(1).atStartOfDay();
+        LocalDateTime end = today.plusDays(2).atStartOfDay();
+        return subscriptionRepository.findAllByStatusAndEndDateBetween(SubscriptionStatus.ACTIVE, start, end);
     }
 }

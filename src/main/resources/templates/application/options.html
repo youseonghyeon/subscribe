@@ -20,7 +20,7 @@
                 <option th:each="option : ${T(com.example.subscribify.entity.DuplicatePaymentOption).values()}"
                         th:value="${option}"
                         th:text="${option.getDescription()}"
-                        th:selected="${app.getDuplicatePaymentOption()}">
+                        th:selected="${option == app.getDuplicatePaymentOption()}">
                 </option>
             </select>
         </div>
@@ -28,4 +28,39 @@
     </form>
 </div>
 </body>
+<style>
+    .container {
+        max-width: 800px; /* 폼의 최대 너비 조정 */
+        margin: auto; /* 중앙 정렬 */
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    select, button {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+    }
+
+    button {
+        background-color: #007bff; /* 또는 브랜드 컬러 */
+        border: none;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        color: white;
+        font-size: 1rem;
+    }
+
+    button:hover {
+        background-color: #0056b3; /* 호버 시 색상 변경 */
+    }
+
+</style>
 </html>
