@@ -6,8 +6,6 @@ import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
-import com.example.subscribify.repository.CustomerRepository;
-import com.example.subscribify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -22,11 +21,8 @@ import java.util.List;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
-    private final UserRepository userRepository;
-    private final CustomerRepository customerRepository;
 
 
-    @Transactional
     public Long createApplication(CreateApplicationDto createApplicationDto, User user) {
         Application application = Application.builder()
                 .name(createApplicationDto.getName())
@@ -34,35 +30,48 @@ public class ApplicationService {
                 .secretKey(ApiKeyGenerator.generateApiKey(32))
                 .user(user)
                 .build();
-        return applicationRepository.save(application).getId();
+        applicationRepository.save(application);
+        log.info("Application created: {}, by User: {}", application.getName(), user.getUsername());
+        return application.getId();
     }
 
-    public void authCheck(Application application, User user) {
-        if (!application.getUser().getId().equals(user.getId())) {
-            throw new AccessDeniedException("Access is denied");
-        }
+    public Application getApplication(Long applicationId, User userForAuthCheck) {
+        Application findApplication = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
+        findApplication.authCheck(userForAuthCheck.getId());
+        return findApplication;
     }
 
-    public List<Application> getMyApplications(Long userId) {
+    public Application getApplicationWithSubscriptionPlan(Long applicationId, User userForAuthCheck) {
+        Application findApplication = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
+                .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
+        findApplication.authCheck(userForAuthCheck.getId());
+        return findApplication;
+    }
+
+    public List<Application> findApplicationsByUserId(Long userId) {
         return applicationRepository.findByUserId(userId);
     }
 
-
     @Transactional
-    public Application updateKeys(Long applicationId, Long sessionUserId) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
-
-        if (!application.getUser().getId().equals(sessionUserId)) {
-            throw new AccessDeniedException("Access is denied");
-        }
-
+    public Application updateKeys(Long applicationId, User user) {
+        Application application = this.getApplication(applicationId, user);
         String apiKey = ApiKeyGenerator.generateApiKey(32);
         String secretKey = ApiKeyGenerator.generateApiKey(32);
-        application.updateKeys(apiKey, secretKey);
-        return application;
+
+        return application.updateKeys(apiKey, secretKey);
     }
 
+
+    /**
+     * Updates the options of a given application.
+     *
+     * @param application          An Application object that should be in a persistent state within the current
+     *                             Hibernate Session or JPA Persistence Context. Any changes to this object
+     *                             will be automatically persisted upon transaction commit, due to the dirty
+     *                             checking feature of JPA/Hibernate.
+     * @param updateApplicationDto DTO containing the new options to be updated.
+     */
 
     @Transactional
     public void updateOptions(Application application, UpdateApplicationDto updateApplicationDto) {

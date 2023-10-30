@@ -6,13 +6,13 @@ import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.DuplicatePaymentOption;
 import com.example.subscribify.entity.User;
-import com.example.subscribify.repository.ApplicationRepository;
-import com.example.subscribify.repository.PaymentRepository;
 import com.example.subscribify.service.application.ApplicationService;
+import com.example.subscribify.service.payment.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,23 +23,20 @@ import java.util.List;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
-    private final ApplicationRepository applicationRepository;
-    private final PaymentRepository paymentRepository;
+    private final PaymentService paymentService;
 
     @GetMapping("/applications")
     public String applicationListForm(@AuthUser User user, Model model) {
-        List<Application> applications = applicationService.getMyApplications(user.getId());
+        List<Application> applications = applicationService.findApplicationsByUserId(user.getId());
         model.addAttribute("applications", applications);
         return "application/list";
     }
 
     @GetMapping("/applications/{applicationId}")
     public String applicationDetailForm(@PathVariable Long applicationId, @AuthUser User user, Model model) {
-        Application application = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
-        application.authCheck(user.getId());
+        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId, user);
 
-        Long totalAmount = paymentRepository.sumAmountByApplicationId(applicationId);
+        Long totalAmount = paymentService.sumAmountByApplicationId(applicationId);
 
         model.addAttribute("app", application);
         model.addAttribute("totalAmount", totalAmount);
@@ -49,9 +46,7 @@ public class ApplicationController {
 
     @GetMapping("/applications/{applicationId}/options")
     public String optionsUpdateForm(@PathVariable Long applicationId, @AuthUser User user, Model model) {
-        Application application = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
-        application.authCheck(user.getId());
+        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId, user);
 
         model.addAttribute("app", application);
         return "application/options";
@@ -61,9 +56,7 @@ public class ApplicationController {
     public String optionsUpdate(@PathVariable Long applicationId,
                                 @AuthUser User user,
                                 @RequestParam("duplicatePaymentOption") DuplicatePaymentOption duplicatePaymentOption) {
-        Application application = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
-        application.authCheck(user.getId());
+        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId, user);
 
         UpdateApplicationDto updateApplicationDto = new UpdateApplicationDto(duplicatePaymentOption);
 
@@ -78,7 +71,7 @@ public class ApplicationController {
     }
 
     @PostMapping("/applications/enroll")
-    public String enrollApplication(@ModelAttribute CreateApplicationDto createApplicationDto, @AuthUser User user) {
+    public String enrollApplication(@ModelAttribute @Validated CreateApplicationDto createApplicationDto, @AuthUser User user) {
         applicationService.createApplication(createApplicationDto, user);
         return "redirect:/applications";
     }
@@ -86,7 +79,7 @@ public class ApplicationController {
 
     @PostMapping("/applications/keys/generate")
     public String generateApiKey(@RequestParam("applicationId") Long applicationId, @AuthUser User user, Model model) {
-        Application updatedApplication = applicationService.updateKeys(applicationId, user.getId());
+        Application updatedApplication = applicationService.updateKeys(applicationId, user);
         model.addAttribute("app", updatedApplication);
         return "redirect:/applications/" + applicationId;
     }

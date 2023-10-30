@@ -1,6 +1,6 @@
 package com.example.subscribify.dto.controller;
 
-import com.example.subscribify.entity.User;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 public class CreateApplicationDto {
 
     private String icon;
+    @NotEmpty
     private String name;
+    @NotEmpty
     private String businessName;
-    private User user;
 }

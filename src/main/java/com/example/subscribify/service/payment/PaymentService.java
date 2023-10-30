@@ -69,4 +69,9 @@ public class PaymentService {
     public List<Payment> getPaymentLog(Long subscriptionPlanId) {
         return paymentRepository.findAllByApplicationId(subscriptionPlanId);
     }
+
+    public Long sumAmountByApplicationId(Long applicationId) {
+        return paymentRepository.sumAmountByApplicationId(applicationId);
+    }
+
 }

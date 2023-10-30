@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(assignableTypes = SubscriptionApiController.class)
+@ControllerAdvice(assignableTypes = SubscriptionProcessingApi.class)
 public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)

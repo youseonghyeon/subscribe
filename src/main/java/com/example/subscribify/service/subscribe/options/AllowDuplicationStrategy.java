@@ -4,9 +4,9 @@ import com.example.subscribify.entity.Customer;
 import com.example.subscribify.entity.Subscription;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.entity.SubscriptionStatus;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
+@Component
 public class AllowDuplicationStrategy implements SubscriptionStrategy {
     @Override
     public Subscription apply(Customer customer, SubscriptionPlan subscriptionPlan) {

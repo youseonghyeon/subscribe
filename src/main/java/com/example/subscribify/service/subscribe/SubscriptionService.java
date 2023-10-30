@@ -10,33 +10,24 @@ import com.example.subscribify.service.subscribe.options.DisallowDuplicationStra
 import com.example.subscribify.service.subscribe.options.SubscriptionStrategy;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static com.example.subscribify.entity.DuplicatePaymentOption.*;
+import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
     private final CustomerService customerService;
-    private final Map<DuplicatePaymentOption, SubscriptionStrategy> strategies;
-
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionPlanRepository subscriptionPlanRepository, CustomerService customerService) {
-        this.subscriptionRepository = subscriptionRepository;
-        this.subscriptionPlanRepository = subscriptionPlanRepository;
-        this.customerService = customerService;
-        this.strategies = new HashMap<>();
-        strategies.put(DISALLOW_DUPLICATION, new DisallowDuplicationStrategy());
-        strategies.put(ALLOW_DUPLICATION, new AllowDuplicationStrategy());
-    }
+    private final AllowDuplicationStrategy allowDuplicationStrategy;
+    private final DisallowDuplicationStrategy disallowDuplicationStrategy;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -45,19 +36,14 @@ public class SubscriptionService {
      * @param customerId    구매자 id (String)
      * @param planId        구매할 plan id (Long)
      * @param authorization API Key (String)
-     * @param option        중복 결제 옵션 (DuplicatePaymentOption)
      * @return 구독 ID (Long)
      */
     @Transactional
-    public EnrollSubscriptionServiceResponse enrollSubscribe(
-            String customerId,
-            Long planId,
-            String authorization,
-            DuplicatePaymentOption option) {
+    public EnrollSubscriptionServiceResponse enrollSubscribe(String customerId, Long planId, String authorization) {
 
         // 구독 Plan을 가져옴
         SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
-                .orElseThrow(() -> new IllegalStateException("Invalid subscription plan ID: " + planId));
+                .orElseThrow(() -> new NoSuchElementException("Invalid subscription plan ID: " + planId));
         Application application = subscriptionPlan.getApplication();
 
         // API Key를 확인
@@ -68,11 +54,13 @@ public class SubscriptionService {
         Customer customer = customerService.getOrCreateCustomer(customerId, application.getId());
 
         // 중복 구독이 가능/ 불가능
-        SubscriptionStrategy strategy = strategies.get(option);
+        SubscriptionStrategy strategy = switch (application.getDuplicatePaymentOption()) {
+            case ALLOW_DUPLICATION -> allowDuplicationStrategy;
+            case DISALLOW_DUPLICATION -> disallowDuplicationStrategy;
+        };
 
-        // 등록
+
         Subscription newSubscription = strategy.apply(customer, subscriptionPlan);
-
         subscriptionRepository.save(newSubscription);
         return new EnrollSubscriptionServiceResponse(newSubscription.getId());
     }
@@ -80,7 +68,7 @@ public class SubscriptionService {
     @Transactional
     public void activateSubscribe(Long subscriptionId, String authorization) {
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
-                .orElseThrow(() -> new IllegalStateException("Invalid customer subscription ID: " + subscriptionId));
+                .orElseThrow(() -> new NoSuchElementException("Invalid customer subscription ID: " + subscriptionId));
         String findAuth = subscription.getSubscriptionPlan().getApplication().getApiKey();
         if (findAuth == null || !findAuth.equals(authorization)) {
             // TODO 예외 처리 및 에러 메시지 전송 처리를 해야 함
@@ -98,7 +86,7 @@ public class SubscriptionService {
     @Transactional
     public void cancelSubscribe(Long customerSubscriptionId) {
         Subscription subscription = subscriptionRepository.findById(customerSubscriptionId)
-                .orElseThrow(() -> new IllegalStateException("Invalid customer subscription ID: " + customerSubscriptionId));
+                .orElseThrow(() -> new NoSuchElementException("Invalid customer subscription ID: " + customerSubscriptionId));
         subscription.cancel();
     }
 
@@ -141,5 +129,10 @@ public class SubscriptionService {
         LocalDateTime start = today.plusDays(1).atStartOfDay();
         LocalDateTime end = today.plusDays(2).atStartOfDay();
         return subscriptionRepository.findAllByStatusAndEndDateBetween(SubscriptionStatus.ACTIVE, start, end);
+    }
+
+    public Subscription getSubscriptionById(Long subscriptionId) {
+        return subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> new NoSuchElementException("Invalid subscription ID: " + subscriptionId));
     }
 }

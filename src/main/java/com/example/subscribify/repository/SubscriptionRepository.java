@@ -4,11 +4,13 @@ import com.example.subscribify.entity.Subscription;
 import com.example.subscribify.entity.SubscriptionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Transactional(readOnly = true)
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
     List<Subscription> findAllBySubscriptionPlanId(Long subscriptionPlanId);
 

@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.TestComponent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @TestComponent
 public class SetupTestUtils {
@@ -25,9 +26,13 @@ public class SetupTestUtils {
     private PasswordEncoder passwordEncoder;
 
     public User createUser() {
+        return this.createUser("testUser");
+    }
+    public User createUser(String username) {
+        long randomId = new Random().nextLong();
         return userRepository.save(User.builder()
-                .id(1L)
-                .username("testUser")
+                .id(randomId)
+                .username(username)
                 .password(passwordEncoder.encode("testPassword"))
                 .email("testEmail@mail.com")
                 .build()
@@ -35,8 +40,9 @@ public class SetupTestUtils {
     }
 
     public Application createApplication(User user) {
+        long randomId = new Random().nextLong();
         return applicationRepository.save(Application.builder()
-                .id(1L)
+                .id(randomId)
                 .name("testApplication")
                 .apiKey("testApiKey")
                 .secretKey("testSecretKey")
@@ -45,8 +51,9 @@ public class SetupTestUtils {
     }
 
     public SubscriptionPlan createSubscriptionPlan(Application application) {
+        long randomId = new Random().nextLong();
         return subscriptionPlanRepository.save(SubscriptionPlan.builder()
-                .id(1L)
+                .id(randomId)
                 .planName("testPlan")
                 .duration(1)
                 .durationUnit(DurationUnit.MONTH)
@@ -59,8 +66,9 @@ public class SetupTestUtils {
     }
 
     public Customer createCustomer(Application application) {
+        long randomId = new Random().nextLong();
         Customer customer = Customer.builder()
-                .id(1L)
+                .id(randomId)
                 .customerId("testCustomerId")
                 .applicationId(application.getId())
                 .build();
@@ -68,8 +76,9 @@ public class SetupTestUtils {
     }
 
     public Subscription createSubscription(SubscriptionPlan plan, Customer customer) {
+        long randomId = new Random().nextLong();
         return subscriptionRepository.save(Subscription.builder()
-                .id(1L)
+                .id(randomId)
                 .subscribeName(plan.getPlanName())
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusMonths(plan.getDuration()))

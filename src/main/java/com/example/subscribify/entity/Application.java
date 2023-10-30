@@ -2,8 +2,8 @@ package com.example.subscribify.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.access.AccessDeniedException;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Entity
@@ -32,14 +32,15 @@ public class Application {
     @OneToMany(mappedBy = "application")
     private List<SubscriptionPlan> subscriptionPlans;
 
-    public void updateKeys(String apiKey, String secretKey) {
+    public Application updateKeys(String apiKey, String secretKey) {
         this.apiKey = apiKey;
         this.secretKey = secretKey;
+        return this;
     }
 
     public void authCheck(Long userId) {
         if (!this.user.getId().equals(userId)) {
-            throw new IllegalArgumentException("Access is denied");
+            throw new AccessDeniedException("Access is denied");
         }
     }
 
