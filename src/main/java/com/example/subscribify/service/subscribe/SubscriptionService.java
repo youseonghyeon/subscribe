@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,7 +40,7 @@ public class SubscriptionService {
      * @return 구독 ID (Long)
      */
     @Transactional
-    public EnrollSubscriptionServiceResponse enrollSubscribe(String customerId, Long planId, String authorization) {
+    public EnrollSubscriptionServiceResponse enrollInSubscription(String customerId, Long planId, String authorization) {
 
         // 구독 Plan을 가져옴
         SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
@@ -47,7 +48,7 @@ public class SubscriptionService {
         Application application = subscriptionPlan.getApplication();
 
         // API Key를 확인
-        if (!authorization.equals(application.getApiKey())) {
+        if (!MessageDigest.isEqual(authorization.getBytes(), application.getApiKey().getBytes())) {
             return new EnrollSubscriptionServiceResponse("Invalid Authorization");
         }
 
@@ -100,7 +101,7 @@ public class SubscriptionService {
 
     /**
      * 만기가 되는 구독 서비스를 찾아서 만료 처리
-     * 대용량 처리이므로 entityManger를 사용하여 flush, clear 처리
+     * 대용량 처리 이므로 flush, clear를 통해 영속성 컨텍스트를 비워줌
      *
      * @param currentDateTime
      * @return

@@ -38,7 +38,7 @@ public class SubscriptionProcessingApi {
             @RequestBody EnrollSubscriptionRequest request,
             @AuthApplication Application application) {
 
-        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(request.getCustomerId(), request.getPlanId(), application.getApiKey());
+        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollInSubscription(request.getCustomerId(), request.getPlanId(), application.getApiKey());
 
         if (serviceResponse.hasError()) {
             return ResponseEntity.badRequest().body(serviceResponse);

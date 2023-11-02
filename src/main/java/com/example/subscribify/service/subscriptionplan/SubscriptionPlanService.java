@@ -12,6 +12,7 @@ import com.example.subscribify.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +37,7 @@ public class SubscriptionPlanService {
      * @param createSubscribeDto 구독 Plan 생성을 위한 DTO
      * @return 생성된 구독 Plan ID
      */
+    @Transactional
     public Long createSubscribePlan(CreateSubscribeDto createSubscribeDto, Application application) {
         SubscriptionPlan newPlan = SubscriptionPlan.builder()
                 .planName(createSubscribeDto.getSubscribeName())
@@ -74,6 +76,7 @@ public class SubscriptionPlanService {
      *
      * @param planId 삭제할 Plan ID
      */
+    @Transactional
     public void deleteSubscribePlan(Long planId) {
         SubscriptionPlan subscriptionPlan = subscriptionPlanRepository.findById(planId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid subscription plan ID: " + planId));
@@ -138,21 +141,17 @@ public class SubscriptionPlanService {
         if (userIdContainsPlan == null || authentication == null ||
                 authentication instanceof AnonymousAuthenticationToken ||
                 "anonymousUser".equals(authentication.getPrincipal())) {
-            throwForbiddenException();
+            throw new AccessDeniedException("access denied");
         }
 
         Object principal = authentication.getPrincipal();
         if (principal instanceof CustomUserDetails customUserDetails) {
             if (!userIdContainsPlan.equals(customUserDetails.toUser().getId())) {
-                throwForbiddenException();
+                throw new AccessDeniedException("access denied");
             }
         } else {
-            throwForbiddenException();
+            throw new AccessDeniedException("access denied");
         }
-    }
-
-    private void throwForbiddenException() {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "이 리소스에 액세스 할 권한이 없습니다.");
     }
 
 

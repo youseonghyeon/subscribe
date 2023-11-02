@@ -27,14 +27,11 @@ public class UserController {
 
     @GetMapping("/signup")
     public String signUpForm(Model model) {
-        // 테스트를 위한 더미 데이터
         model.addAttribute("enrollUserRequest", mockModel());
-        // TODO: 테스트를 위한 더미 데이터를 사용하지 않을 경우 아래 코드로 변경
-        // model.addAttribute("user", new CreateUserDto());
         return "user/signup";
     }
 
-    // 테스트를 위한 임시 코드입니다. PROD 배포 시 꼭 삭제해주세요.
+    // 회원가입을 위한 테스트 메서드
     private EnrollUserRequest mockModel() {
         int i = new Random().nextInt(1000) + 1;
         int j = new Random().nextInt(1000) + 1;

@@ -20,12 +20,6 @@ public class UserService {
     private final UserRepository userRepository;
 
 
-    /**
-     * 사용자 생성 (username, email 중복 검사)
-     *
-     * @param enrollUserRequest
-     * @return userId (PK : Long)
-     */
     public Long createUser(EnrollUserRequest enrollUserRequest) {
 
         if (isUsernameTaken(enrollUserRequest.getUsername())) {
@@ -46,27 +40,15 @@ public class UserService {
                 .zip(enrollUserRequest.getZip())
                 .country(enrollUserRequest.getCountry())
                 .build();
+
         return userRepository.save(user).getId();
     }
 
-    /**
-     * 사용자 정보 조회
-     *
-     * @param userId
-     * @return User
-     */
     public User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found userId : " + userId));
     }
 
-    /**
-     * 사용자 정보 수정
-     *
-     * @param userId 변경할 사용자의 PK
-     * @param updateUserServiceRequest // TODO: 수정할 정보만 받아서 처리하도록 변경 (현재는 편의상 createUserDto로 받음)
-     * @return User
-     */
     @Transactional
     public Long updateUser(Long userId, UpdateUserServiceRequest updateUserServiceRequest) {
         User user = userRepository.findById(userId)
@@ -82,13 +64,8 @@ public class UserService {
         return userId;
     }
 
-    /**
-     * 사용자 삭제
-     *
-     * @param userId
-     */
     public void deleteUser(Long userId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException("Not supported yet");
 //        User user = userRepository.findById(userId)
 //                .orElseThrow(() -> new NoSuchElementException("User not found userId : " + userId));
 //        user.delete();

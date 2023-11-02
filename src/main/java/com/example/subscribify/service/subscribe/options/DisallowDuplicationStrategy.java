@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 public class DisallowDuplicationStrategy implements SubscriptionStrategy {
     @Override
     public Subscription apply(Customer customer, SubscriptionPlan subscriptionPlan) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
 
         // 이미 동일한 plan을 구독중이라면, 예외 처리
         if (customer.getSubscriptions().stream()

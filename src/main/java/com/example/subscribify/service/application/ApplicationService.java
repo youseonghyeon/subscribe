@@ -8,7 +8,6 @@ import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +37,9 @@ public class ApplicationService {
     public Application getApplication(Long applicationId, User userForAuthCheck) {
         Application findApplication = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
+//        if (userForAuthCheck == "어드민") {
+//            return findApplication;
+//        }
         findApplication.authCheck(userForAuthCheck.getId());
         return findApplication;
     }
@@ -45,6 +47,9 @@ public class ApplicationService {
     public Application getApplicationWithSubscriptionPlan(Long applicationId, User userForAuthCheck) {
         Application findApplication = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
                 .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
+//        if (userForAuthCheck == "어드민") {
+//            return findApplication;
+//        }
         findApplication.authCheck(userForAuthCheck.getId());
         return findApplication;
     }
@@ -64,13 +69,9 @@ public class ApplicationService {
 
 
     /**
-     * Updates the options of a given application.
+     * Application 옵션 변경
      *
-     * @param application          An Application object that should be in a persistent state within the current
-     *                             Hibernate Session or JPA Persistence Context. Any changes to this object
-     *                             will be automatically persisted upon transaction commit, due to the dirty
-     *                             checking feature of JPA/Hibernate.
-     * @param updateApplicationDto DTO containing the new options to be updated.
+     * @param application          Application should be in a persistent state.
      */
 
     @Transactional
