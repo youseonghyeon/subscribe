@@ -8,6 +8,4 @@ public interface SubscriptionStrategy {
 
     Subscription apply(Customer customer, SubscriptionPlan subscriptionPlan);
 
-
-
 }

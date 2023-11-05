@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.security.MessageDigest;
 import java.util.List;
 
 @Entity
@@ -40,6 +41,12 @@ public class Application {
 
     public void authCheck(Long userId) {
         if (!this.user.getId().equals(userId)) {
+            throw new AccessDeniedException("Access is denied");
+        }
+    }
+
+    public void apiKeyCheck(String apiKey) {
+        if (!MessageDigest.isEqual(this.apiKey.getBytes(), apiKey.getBytes())) {
             throw new AccessDeniedException("Access is denied");
         }
     }
