@@ -1,8 +1,11 @@
 package com.example.subscribify.entity;
 
+import com.example.subscribify.config.security.CustomUserDetails;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.security.MessageDigest;
 import java.util.List;
@@ -33,14 +36,17 @@ public class Application {
     @OneToMany(mappedBy = "application")
     private List<SubscriptionPlan> subscriptionPlans;
 
-    public Application updateKeys(String apiKey, String secretKey) {
+    public Application updateApiKeys(String apiKey, String secretKey) {
         this.apiKey = apiKey;
         this.secretKey = secretKey;
         return this;
     }
 
-    public void authCheck(Long userId) {
-        if (!this.user.getId().equals(userId)) {
+    public void authCheck() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = extractUserId(authentication);
+
+        if (!isAdmin(authentication) && !isUserResourceOwner(currentUserId)) {
             throw new AccessDeniedException("Access is denied");
         }
     }
@@ -54,4 +60,18 @@ public class Application {
     public void updateOptions(DuplicatePaymentOption duplicatePaymentOption) {
         this.duplicatePaymentOption = duplicatePaymentOption;
     }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> "ROLE_ADMIN".equals(grantedAuthority.getAuthority()));
+    }
+
+    private Long extractUserId(Authentication authentication) {
+        return ((CustomUserDetails) authentication.getPrincipal()).toUser().getId();
+    }
+
+    private boolean isUserResourceOwner(Long userId) {
+        return this.user.getId().equals(userId);
+    }
+
 }

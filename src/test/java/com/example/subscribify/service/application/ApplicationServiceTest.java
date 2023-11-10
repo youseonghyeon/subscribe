@@ -100,7 +100,7 @@ class ApplicationServiceTest {
         em.clear();
 
         //when
-        Application findApplication = applicationService.getApplicationWithSubscriptionPlan(application.getId(), user);
+        Application findApplication = applicationService.getApplicationWithSubscriptionPlan(application.getId());
         em.flush();
         em.clear();
 

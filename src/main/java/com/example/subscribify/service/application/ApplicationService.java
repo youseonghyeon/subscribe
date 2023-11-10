@@ -5,6 +5,7 @@ import com.example.subscribify.dto.UpdateApplicationDto;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.User;
+import com.example.subscribify.exception.ApplicationNotFoundException;
 import com.example.subscribify.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,20 +38,14 @@ public class ApplicationService {
     public Application getApplication(Long applicationId, User userForAuthCheck) {
         Application findApplication = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
-//        if (userForAuthCheck == "어드민") {
-//            return findApplication;
-//        }
-        findApplication.authCheck(userForAuthCheck.getId());
+        findApplication.authCheck();
         return findApplication;
     }
 
-    public Application getApplicationWithSubscriptionPlan(Long applicationId, User userForAuthCheck) {
+    public Application getApplicationWithSubscriptionPlan(Long applicationId) {
         Application findApplication = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
                 .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
-//        if (userForAuthCheck == "어드민") {
-//            return findApplication;
-//        }
-        findApplication.authCheck(userForAuthCheck.getId());
+        findApplication.authCheck();
         return findApplication;
     }
 
@@ -64,7 +59,7 @@ public class ApplicationService {
         String apiKey = ApiKeyGenerator.generateApiKey(32);
         String secretKey = ApiKeyGenerator.generateApiKey(32);
 
-        return application.updateKeys(apiKey, secretKey);
+        return application.updateApiKeys(apiKey, secretKey);
     }
 
 
@@ -77,5 +72,15 @@ public class ApplicationService {
     @Transactional
     public void updateOptions(Application application, UpdateApplicationDto updateApplicationDto) {
         application.updateOptions(updateApplicationDto.getDuplicatePaymentOption());
+    }
+
+    public Application findApplicationById(Long applicationId) {
+        return applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ApplicationNotFoundException(applicationId));
+    }
+
+    public Application findApplicationByApiKey(String apiKey) {
+        return applicationRepository.findByApiKey(apiKey)
+                .orElseThrow(() -> new ApplicationNotFoundException(null));
     }
 }

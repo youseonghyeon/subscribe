@@ -17,8 +17,8 @@ public class SubscriptionPlan extends BaseTimeEntity{
     private Integer duration;
     private DurationUnit durationUnit; // Month, Year
     private Long price;
-    private Double discount;
     private DiscountUnit discountType; // Percent, Fixed, None
+    private Double discount;
     private Long discountedPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)

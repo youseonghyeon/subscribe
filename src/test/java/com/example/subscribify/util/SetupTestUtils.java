@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 @TestComponent
-public class SetupTestUtils {
+public final class SetupTestUtils {
 
     @Autowired
     private SubscriptionPlanRepository subscriptionPlanRepository;

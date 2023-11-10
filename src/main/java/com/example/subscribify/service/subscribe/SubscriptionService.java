@@ -136,11 +136,14 @@ public class SubscriptionService {
     }
 
     private SubscriptionStrategy determineSubscriptionStrategy(Application application) {
+        // 전략 개수가 많아 지면, List 로 의존성 주입 받는 것 검토
         return switch (application.getDuplicatePaymentOption()) {
             case ALLOW_DUPLICATION -> allowDuplicationStrategy;
             case DISALLOW_DUPLICATION -> disallowDuplicationStrategy;
         };
     }
+
+
 
     private Subscription createAndSaveSubscription(Customer customer, SubscriptionPlan subscriptionPlan, SubscriptionStrategy strategy) {
         Subscription subscription = strategy.apply(customer, subscriptionPlan);

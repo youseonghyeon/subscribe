@@ -1,7 +1,7 @@
 package com.example.subscribify.config;
 
 import com.example.subscribify.config.security.SecurityArgumentResolver;
-import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.service.application.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -13,11 +13,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new SecurityArgumentResolver());
-        resolvers.add(new AuthApplicationArgumentResolver(applicationRepository));
+        resolvers.add(new AuthApplicationArgumentResolver(applicationService));
     }
 }

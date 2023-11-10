@@ -6,7 +6,6 @@ import com.example.subscribify.dto.controller.UpdateSubscribeDto;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.entity.SubscriptionStatus;
-import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -29,7 +29,6 @@ public class SubscriptionPlanService {
 
     private final SubscriptionPlanRepository subscriptionPlanRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final ApplicationRepository applicationRepository;
 
     /**
      * 구독 Plan 생성
@@ -38,7 +37,12 @@ public class SubscriptionPlanService {
      * @return 생성된 구독 Plan ID
      */
     @Transactional
-    public Long createSubscribePlan(CreateSubscribeDto createSubscribeDto, Application application) {
+    public Long createSubscriptionPlan(CreateSubscribeDto createSubscribeDto, Application application) {
+        Objects.requireNonNull(createSubscribeDto, "createSubscribeDto must not be null");
+        Objects.requireNonNull(application, "application must not be null");
+        if (createSubscribeDto.getPrice() < 0) {
+            throw new IllegalArgumentException("Price cannot be negative");
+        }
         SubscriptionPlan newPlan = SubscriptionPlan.builder()
                 .planName(createSubscribeDto.getSubscribeName())
                 .duration(createSubscribeDto.getDuration())
@@ -46,7 +50,6 @@ public class SubscriptionPlanService {
                 .price(createSubscribeDto.getPrice())
                 .discount(createSubscribeDto.getDiscount())
                 .discountType(createSubscribeDto.getDiscountType())
-                .discountedPrice(createSubscribeDto.getDiscountedPrice())
                 .application(application)
                 .build();
         return subscriptionPlanRepository.save(newPlan).getId();

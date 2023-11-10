@@ -33,8 +33,8 @@ public class ApplicationController {
     }
 
     @GetMapping("/applications/{applicationId}")
-    public String applicationDetailForm(@PathVariable Long applicationId, @AuthUser User user, Model model) {
-        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId, user);
+    public String applicationDetailForm(@PathVariable Long applicationId, Model model) {
+        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId);
 
         Long totalAmount = paymentService.sumAmountByApplicationId(applicationId);
 
@@ -45,8 +45,8 @@ public class ApplicationController {
     }
 
     @GetMapping("/applications/{applicationId}/options")
-    public String optionsUpdateForm(@PathVariable Long applicationId, @AuthUser User user, Model model) {
-        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId, user);
+    public String optionsUpdateForm(@PathVariable Long applicationId, Model model) {
+        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId);
 
         model.addAttribute("app", application);
         return "application/options";
@@ -54,9 +54,8 @@ public class ApplicationController {
 
     @PostMapping("/applications/{applicationId}/options")
     public String optionsUpdate(@PathVariable Long applicationId,
-                                @AuthUser User user,
                                 @RequestParam("duplicatePaymentOption") DuplicatePaymentOption duplicatePaymentOption) {
-        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId, user);
+        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId);
 
         UpdateApplicationDto updateApplicationDto = new UpdateApplicationDto(duplicatePaymentOption);
 

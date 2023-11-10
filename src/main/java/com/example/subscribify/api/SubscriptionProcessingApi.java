@@ -7,7 +7,6 @@ import com.example.subscribify.dto.service.EnrollSubscriptionServiceResponse;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.PaymentStatus;
 import com.example.subscribify.entity.Subscription;
-import com.example.subscribify.repository.SubscriptionRepository;
 import com.example.subscribify.service.payment.PaymentService;
 import com.example.subscribify.service.subscribe.SubscriptionService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ public class SubscriptionProcessingApi {
 
     private final SubscriptionService subscriptionService;
     private final PaymentService paymentService;
-    private final SubscriptionRepository subscriptionRepository;
 
     /**
      * 구독 등록 api

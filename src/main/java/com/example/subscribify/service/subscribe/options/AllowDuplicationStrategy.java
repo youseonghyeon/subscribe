@@ -6,7 +6,7 @@ import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.entity.SubscriptionStatus;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("allowDuplicationStrategy")
 public class AllowDuplicationStrategy implements SubscriptionStrategy {
     @Override
     public Subscription apply(Customer customer, SubscriptionPlan subscriptionPlan) {

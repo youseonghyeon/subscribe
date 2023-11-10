@@ -4,6 +4,7 @@ import com.example.subscribify.dto.controller.CreateSubscribeDto;
 import com.example.subscribify.dto.controller.UpdateSubscribeDto;
 import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.service.application.ApplicationService;
 import com.example.subscribify.service.subscribe.SubscriptionService;
 import com.example.subscribify.service.subscriptionplan.SubscriptionPlanService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class SubscriptionController {
 
     private final SubscriptionPlanService subscriptionPlanService;
     private final SubscriptionService subscriptionService;
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
 
 
     /**
@@ -38,9 +39,8 @@ public class SubscriptionController {
     @GetMapping("/subscription/enroll/{applicationId}")
     public String enrollSubscriptionForm(Model model, @PathVariable Long applicationId) {
         // 테스트를 위한 더미 데이터
-        model.addAttribute("subscribe", mockSubscription(applicationId));
+        model.addAttribute("subscribe", mockSubscription(applicationId) /* new CreateSubscribeDto() */);
 
-//        model.addAttribute("subscribe", new CreateSubscribeDto());
         return "subscription/enroll";
     }
 
@@ -70,16 +70,15 @@ public class SubscriptionController {
      */
     @PostMapping("/subscription/enroll")
     public String enrollSubscription(@ModelAttribute CreateSubscribeDto createSubscribeDto) {
-        Application application = applicationRepository.findById(createSubscribeDto.getApplicationId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid application ID"));
-        Long planId = subscriptionPlanService.createSubscribePlan(createSubscribeDto, application);
+        Application application = applicationService.findApplicationById(createSubscribeDto.getApplicationId());
+        Long planId = subscriptionPlanService.createSubscriptionPlan(createSubscribeDto, application);
         return "redirect:/subscription/" + planId;
     }
 
     /**
      * 특정 구독의 상세 페이지를 반환합니다.
      *
-     * @param model  Model 객체
+     * @param model              Model 객체
      * @param subscriptionPlanId 상세 정보를 조회할 구독의 ID
      * @return 구독 상세 페이지 경로
      */
@@ -134,7 +133,6 @@ public class SubscriptionController {
         subscriptionPlanService.deleteSubscribePlan(planId);
         return "redirect:/";
     }
-
 
 
 }

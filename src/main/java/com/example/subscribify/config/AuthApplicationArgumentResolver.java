@@ -3,6 +3,7 @@ package com.example.subscribify.config;
 import com.example.subscribify.domain.AuthApplication;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.service.application.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class AuthApplicationArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -28,10 +29,12 @@ public class AuthApplicationArgumentResolver implements HandlerMethodArgumentRes
         if (auth != null) {
             auth = auth.replace("Bearer ", "");
         }
-        return applicationRepository.findByApiKey(auth)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid API Key"));
-        // 어려웠던 부분.
-        // api에는 여러 기능들이 있는데 검증로직을 어디에 두어야 할지 고민이었다.
-        // argumentResolver를 이용해서 접근 가능한 application을 반환하는 형식으로 변경함
+        return applicationService.findApplicationByApiKey(auth);
+
+        /**
+         * 프로젝트 중 어려웠던 부분.
+         * 문제 : api에는 여러 기능들이 있는데 검증 로직을 어떤 레이어에 두어야 할지 고민이었다.
+         * 해결 : apiKey 즉, argumentResolver를 이용해서 접근 가능한 application을 반환하는 형식으로 변경함
+         */
     }
 }
