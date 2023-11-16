@@ -6,8 +6,8 @@ import com.example.subscribify.entity.PaymentStatus;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.repository.PaymentRepository;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
-import com.example.subscribify.service.payment.strategy.DiscountPolicy;
-import com.example.subscribify.service.payment.strategy.DiscountPolicyFactory;
+import com.example.subscribify.service.payment.discountstrategy.DiscountPolicy;
+import com.example.subscribify.service.payment.discountstrategy.DiscountPolicyFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,6 @@ public class PaymentService {
     public void pay(String uerId, Long applicationId, Long productId, Long amount, PaymentStatus status) {
         // 결제 로직 위치
 
-
         // 결제 결과 저장 로직 위치
         Payment payment = Payment.builder()
                 .transactionId(UUID.randomUUID().toString())
@@ -42,10 +41,8 @@ public class PaymentService {
     public void payToPgApi(String userId, Long planId) {
         SubscriptionPlan subscriptionPlan = getSubscriptionPlan(planId);
         DiscountUnit discountType = subscriptionPlan.getDiscountType();
-        DiscountPolicy discountPolicy = DiscountPolicyFactory.create(discountType);
-        long totalPrice = discountPolicy.calculateDiscountAmount(subscriptionPlan.getPrice(), subscriptionPlan.getDiscountType(), subscriptionPlan.getDiscount());
-//        pgService.processPayment(userId, totalPrice, subscriptionPlan.getPaymentType())
-
+        DiscountPolicy discountPolicy = DiscountPolicyFactory.createPolicy(discountType);
+        long totalPrice = discountPolicy.calculateDiscountedAmount(subscriptionPlan.getPrice(), subscriptionPlan.getDiscount());
     }
 
 
@@ -53,8 +50,8 @@ public class PaymentService {
     public Long getPaymentAmount(Long subscriptionPlanId) {
         SubscriptionPlan plan = getSubscriptionPlan(subscriptionPlanId);
         DiscountUnit discountType = plan.getDiscountType();
-        DiscountPolicy discountPolicy = DiscountPolicyFactory.create(discountType);
-        return discountPolicy.calculateDiscountAmount(plan.getPrice(), plan.getDiscountType(), plan.getDiscount());
+        DiscountPolicy discountPolicy = DiscountPolicyFactory.createPolicy(discountType);
+        return discountPolicy.calculateDiscountedAmount(plan.getPrice(), plan.getDiscount());
     }
 
     private SubscriptionPlan getSubscriptionPlan(Long subscriptionPlanId) {

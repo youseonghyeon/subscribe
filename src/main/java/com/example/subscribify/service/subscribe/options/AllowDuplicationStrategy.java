@@ -15,10 +15,8 @@ public class AllowDuplicationStrategy extends OptionDecorator {
     @Override
     public OptionResult apply(Customer customer, SubscriptionPlan subscriptionPlan) {
         OptionResult optionResult = optionComponent.apply(customer, subscriptionPlan);
-
         // 부가 기능 위치
         log.info("AllowDuplicationStrategy.apply() called");
-
         return optionResult;
     }
 }

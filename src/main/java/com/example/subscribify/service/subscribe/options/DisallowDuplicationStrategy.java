@@ -16,20 +16,16 @@ public class DisallowDuplicationStrategy extends OptionDecorator {
     /**
      * 주의 :: customer 객체에 연결된 subscription 객체들은 eagerLoading 이 필요함.
      * TODO (LazyLoading 이 가능 하도록 수정 하거나 해당 메서드를 위해 EagerLoading 을 수행 하도록 변경 해야 함)
-     *
-     * @param customer
-     * @param subscriptionPlan
-     * @return
      */
     @Override
     public OptionResult apply(Customer customer, SubscriptionPlan subscriptionPlan) {
         OptionResult optionResult = optionComponent.apply(customer, subscriptionPlan);
-
-        log.info("DisallowDuplicationStrategy.apply() called");
-
         if (!customer.getSubscriptions().isEmpty() && hasActiveSubscriptionForPlan(customer, subscriptionPlan)) {
             throw new RuntimeException("Customer already has an active subscription.");
         }
+        // 부가 기능 위치
+
+        log.info("DisallowDuplicationStrategy.apply() called");
 
         return optionResult;
     }

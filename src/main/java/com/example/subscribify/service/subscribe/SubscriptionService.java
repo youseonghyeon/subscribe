@@ -7,8 +7,8 @@ import com.example.subscribify.exception.SubscriptionPlanNotFoundException;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.repository.SubscriptionRepository;
 import com.example.subscribify.service.customer.CustomerService;
-import com.example.subscribify.service.payment.strategy.DiscountPolicy;
-import com.example.subscribify.service.payment.strategy.DiscountPolicyFactory;
+import com.example.subscribify.service.payment.discountstrategy.DiscountPolicy;
+import com.example.subscribify.service.payment.discountstrategy.DiscountPolicyFactory;
 import com.example.subscribify.service.subscribe.options.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -166,8 +166,8 @@ public class SubscriptionService {
         OptionResult optionResult = subscriptionStrategy.apply(customer, subscriptionPlan);
 
         // 2. 할인 옵션 설정 (전략 패턴)
-        DiscountPolicy discountPolicy = DiscountPolicyFactory.create(subscriptionPlan.getDiscountType());
-        long discountedPrice = discountPolicy.calculateDiscountAmount(subscriptionPlan.getPrice(), subscriptionPlan.getDiscountType(), subscriptionPlan.getDiscount());
+        DiscountPolicy discountPolicy = DiscountPolicyFactory.createPolicy(subscriptionPlan.getDiscountType());
+        long discountedPrice = discountPolicy.calculateDiscountedAmount(subscriptionPlan.getPrice(), subscriptionPlan.getDiscount());
 
         // 3. 객체 생성
         // optionResult 데이터 사용 예정
