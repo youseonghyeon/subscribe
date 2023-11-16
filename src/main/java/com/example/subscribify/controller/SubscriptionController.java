@@ -70,7 +70,7 @@ public class SubscriptionController {
      */
     @PostMapping("/subscription/enroll")
     public String enrollSubscription(@ModelAttribute CreateSubscribeDto createSubscribeDto) {
-        Application application = applicationService.findApplicationById(createSubscribeDto.getApplicationId());
+        Application application = applicationService.findApplicationByIdWithAuth(createSubscribeDto.getApplicationId());
         Long planId = subscriptionPlanService.createSubscriptionPlan(createSubscribeDto, application);
         return "redirect:/subscription/" + planId;
     }

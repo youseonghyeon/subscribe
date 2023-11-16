@@ -33,7 +33,7 @@ public class Application {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "application")
+    @OneToMany(mappedBy = "application", cascade = CascadeType.REMOVE)
     private List<SubscriptionPlan> subscriptionPlans;
 
     public Application updateApiKeys(String apiKey, String secretKey) {

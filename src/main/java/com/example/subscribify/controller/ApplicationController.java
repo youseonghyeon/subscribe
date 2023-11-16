@@ -15,6 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -33,21 +37,21 @@ public class ApplicationController {
     }
 
     @GetMapping("/applications/{applicationId}")
-    public String applicationDetailForm(@PathVariable Long applicationId, Model model) {
-        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId);
-
+    public String applicationDetailForm(@PathVariable Long applicationId, @RequestParam(value = "globalError", required = false) String errorMsg, Model model) {
+        Application application = applicationService.findApplicationWithSubscriptionsAndAuth(applicationId);
         Long totalAmount = paymentService.sumAmountByApplicationId(applicationId);
-
         model.addAttribute("app", application);
         model.addAttribute("totalAmount", totalAmount);
         model.addAttribute("subscriptionPlans", application.getSubscriptionPlans());
+        if (errorMsg != null) {
+            model.addAttribute("globalError", errorMsg);
+        }
         return "application/detail";
     }
 
     @GetMapping("/applications/{applicationId}/options")
     public String optionsUpdateForm(@PathVariable Long applicationId, Model model) {
-        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId);
-
+        Application application = applicationService.findApplicationWithSubscriptionsAndAuth(applicationId);
         model.addAttribute("app", application);
         return "application/options";
     }
@@ -55,7 +59,7 @@ public class ApplicationController {
     @PostMapping("/applications/{applicationId}/options")
     public String optionsUpdate(@PathVariable Long applicationId,
                                 @RequestParam("duplicatePaymentOption") DuplicatePaymentOption duplicatePaymentOption) {
-        Application application = applicationService.getApplicationWithSubscriptionPlan(applicationId);
+        Application application = applicationService.findApplicationWithSubscriptionsAndAuth(applicationId);
 
         UpdateApplicationDto updateApplicationDto = new UpdateApplicationDto(duplicatePaymentOption);
 
@@ -77,10 +81,22 @@ public class ApplicationController {
 
 
     @PostMapping("/applications/keys/generate")
-    public String generateApiKey(@RequestParam("applicationId") Long applicationId, @AuthUser User user, Model model) {
-        Application updatedApplication = applicationService.updateKeys(applicationId, user);
+    public String generateApiKey(@RequestParam("applicationId") Long applicationId, Model model) {
+        Application updatedApplication = applicationService.updateKeys(applicationId);
         model.addAttribute("app", updatedApplication);
         return "redirect:/applications/" + applicationId;
     }
+
+    @PostMapping("/applications/delete/{applicationId}")
+    public String deleteApplication(@PathVariable Long applicationId) throws UnsupportedEncodingException {
+        LocalDateTime now = LocalDateTime.now();
+        boolean deleteStatus = applicationService.deleteApplication(applicationId, now);
+        if (!deleteStatus) {
+            String existActiveSubscription = URLEncoder.encode("해당 애플리케이션에 활성화된 구독이 존재합니다.", StandardCharsets.UTF_8);
+            return "redirect:/applications/" + applicationId + "?globalError=" + existActiveSubscription;
+        }
+        return "redirect:/applications";
+    }
+
 
 }

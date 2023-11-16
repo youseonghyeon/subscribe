@@ -9,6 +9,11 @@
 <div th:replace="~{common :: header}"></div>
 
 <div class="container mt-5">
+
+    <div th:if="${globalError} != null" class="alert alert-danger" role="alert">
+        <p th:text="${globalError}"></p>
+    </div>
+
     <h1 class="text-center mb-5" style="color: #2C3E50;">애플리케이션 상세 정보</h1>
 
     <div class="card mb-3 p-4 shadow-sm">
@@ -62,6 +67,13 @@
         <p>구독 서비스가 없습니다.</p>
     </div>
 
+    <div class="card mb-3 p-4 shadow-sm">
+        <form th:action="@{/applications/delete/{applicationId}(applicationId=${app.getId()})}" method="post" class="mt-2">
+            <button type="submit" class="btn btn-danger" onclick="deleteConfirmAndSubmit(event)">애플리케이션 삭제</button>
+        </form>
+    </div>
+
+
 
 </div>
 </body>
@@ -70,6 +82,13 @@
     function showConfirmAndSubmit(event) {
         event.preventDefault();
         if (confirm('키를 새로 발급하시겠습니까?')) {
+            event.currentTarget.form.submit();
+        }
+    }
+
+    function deleteConfirmAndSubmit(event) {
+        event.preventDefault();
+        if (confirm('정말 삭제하시겠습니까?')) {
             event.currentTarget.form.submit();
         }
     }

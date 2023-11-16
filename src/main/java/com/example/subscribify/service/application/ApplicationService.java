@@ -4,14 +4,17 @@ import com.example.subscribify.config.security.ApiKeyGenerator;
 import com.example.subscribify.dto.UpdateApplicationDto;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
+import com.example.subscribify.entity.Subscription;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.exception.ApplicationNotFoundException;
 import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,8 +24,10 @@ import java.util.NoSuchElementException;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
 
+    @Transactional
     public Long createApplication(CreateApplicationDto createApplicationDto, User user) {
         Application application = Application.builder()
                 .name(createApplicationDto.getName())
@@ -35,52 +40,61 @@ public class ApplicationService {
         return application.getId();
     }
 
-    public Application getApplication(Long applicationId, User userForAuthCheck) {
-        Application findApplication = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
-        findApplication.authCheck();
-        return findApplication;
-    }
-
-    public Application getApplicationWithSubscriptionPlan(Long applicationId) {
-        Application findApplication = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
-                .orElseThrow(() -> new NoSuchElementException("Invalid application ID"));
-        findApplication.authCheck();
-        return findApplication;
-    }
-
-    public List<Application> findApplicationsByUserId(Long userId) {
-        return applicationRepository.findByUserId(userId);
-    }
-
     @Transactional
-    public Application updateKeys(Long applicationId, User user) {
-        Application application = this.getApplication(applicationId, user);
+    public Application updateKeys(Long applicationId) {
+        Application application = findApplicationByIdWithAuth(applicationId);
         String apiKey = ApiKeyGenerator.generateApiKey(32);
         String secretKey = ApiKeyGenerator.generateApiKey(32);
 
         return application.updateApiKeys(apiKey, secretKey);
     }
 
-
-    /**
-     * Application 옵션 변경
-     *
-     * @param application          Application should be in a persistent state.
-     */
-
     @Transactional
     public void updateOptions(Application application, UpdateApplicationDto updateApplicationDto) {
         application.updateOptions(updateApplicationDto.getDuplicatePaymentOption());
     }
 
-    public Application findApplicationById(Long applicationId) {
+    @Transactional
+    public boolean deleteApplication(Long applicationId, LocalDateTime today) {
+        Application findApplication = findApplicationByIdWithAuth(applicationId);
+        List<Subscription> activeSubscriptions = subscriptionRepository.findActiveSubscriptionsCountByApplicationId(applicationId, today);
+        if (activeSubscriptions.isEmpty()) {
+            // TODO soft delete 로 변경해야 함. 이후 cascade 설정도 제거해야 함.
+            applicationRepository.delete(findApplication);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    public Application findApplicationByIdWithAuth(Long applicationId) {
+        Application findApplication = findApplicationById(applicationId);
+        findApplication.authCheck();
+        return findApplication;
+    }
+    private Application findApplicationById(Long applicationId) {
         return applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ApplicationNotFoundException(applicationId));
+    }
+
+    public Application findApplicationWithSubscriptionsAndAuth(Long applicationId) {
+        // eager loading
+        Application findApplication = applicationRepository.findByIdWithSubscriptionPlans(applicationId)
+                .orElseThrow(() -> new ApplicationNotFoundException(applicationId));
+        findApplication.authCheck();
+        return findApplication;
     }
 
     public Application findApplicationByApiKey(String apiKey) {
         return applicationRepository.findByApiKey(apiKey)
                 .orElseThrow(() -> new ApplicationNotFoundException(null));
     }
+
+    public List<Application> findApplicationsByUserId(Long userId) {
+        return applicationRepository.findByUserId(userId);
+    }
+
+
 }

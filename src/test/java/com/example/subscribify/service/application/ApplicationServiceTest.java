@@ -2,10 +2,7 @@ package com.example.subscribify.service.application;
 
 import com.example.subscribify.dto.UpdateApplicationDto;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
-import com.example.subscribify.entity.Application;
-import com.example.subscribify.entity.DuplicatePaymentOption;
-import com.example.subscribify.entity.SubscriptionPlan;
-import com.example.subscribify.entity.User;
+import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.util.SecurityTestUtils;
 import com.example.subscribify.util.SetupTestUtils;
@@ -20,6 +17,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -66,7 +64,7 @@ class ApplicationServiceTest {
         SecurityTestUtils.mockLogin(user1);
 
         //when
-        applicationService.getApplication(application.getId(), user1);
+        applicationService.findApplicationByIdWithAuth(application.getId());
 
         //then
         assertNotNull(application);
@@ -82,7 +80,7 @@ class ApplicationServiceTest {
         //when (다른 유저의 get 요청)
         User user2 = setupTestUtils.createUser("user2");
         assertThrows(AccessDeniedException.class,
-                () -> applicationService.getApplication(application.getId(), user2));
+                () -> applicationService.findApplicationByIdWithAuth(application.getId()));
     }
 
     @Test
@@ -90,7 +88,7 @@ class ApplicationServiceTest {
     void getApplicationNoSuchElementsFailTest() {
         User user1 = setupTestUtils.createUser("user1");
         assertThrows(NoSuchElementException.class,
-                () -> applicationService.getApplication(5724658723L, user1));
+                () -> applicationService.findApplicationByIdWithAuth(5724658723L));
     }
 
     @Test
@@ -105,7 +103,7 @@ class ApplicationServiceTest {
         em.clear();
 
         //when
-        Application findApplication = applicationService.getApplicationWithSubscriptionPlan(application.getId());
+        Application findApplication = applicationService.findApplicationWithSubscriptionsAndAuth(application.getId());
         em.flush();
         em.clear();
 
@@ -128,7 +126,7 @@ class ApplicationServiceTest {
 
         SecurityTestUtils.mockLogin(user);
         //when
-        applicationService.updateKeys(application.getId(), user);
+        applicationService.updateKeys(application.getId());
         em.flush();
         em.clear();
         //then
@@ -147,9 +145,28 @@ class ApplicationServiceTest {
         //when
         applicationService.updateOptions(application, updateApplicationDto);
         //then
+    }
 
+    /**
+     * TODO 다시 작성해야 합ㄴ디ㅏ.
+     */
+    @Test
+    void deleteApplicationTest() {
+        //given
+        User user = setupTestUtils.createUser();
+        Application application = setupTestUtils.createApplication(user);
+        SubscriptionPlan subscriptionPlan = setupTestUtils.createSubscriptionPlan(application);
+        SecurityTestUtils.mockLogin(user);
 
+        Customer customer = setupTestUtils.createCustomer(application);
+        Customer customer2 = setupTestUtils.createCustomer(application);
 
+        setupTestUtils.createSubscription(subscriptionPlan, customer2);
+        Subscription subscription = setupTestUtils.createSubscription(subscriptionPlan, customer);
+        subscription.activate();
+
+        //when
+        applicationService.deleteApplication(application.getId(), LocalDateTime.now());
     }
 
 }
