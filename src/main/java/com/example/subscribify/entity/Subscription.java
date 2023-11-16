@@ -66,4 +66,8 @@ public class Subscription extends BaseTimeEntity {
     public void expire() {
         status = SubscriptionStatus.EXPIRED;
     }
+
+    public void setDiscountedPrice(Long discountedPrice) {
+        this.discountedPrice = discountedPrice;
+    }
 }

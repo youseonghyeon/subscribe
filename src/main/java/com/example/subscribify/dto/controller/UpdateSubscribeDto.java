@@ -31,6 +31,5 @@ public class UpdateSubscribeDto {
         this.price = subscriptionPlan.getPrice();
         this.discount = subscriptionPlan.getDiscount();
         this.discountType = subscriptionPlan.getDiscountType();
-        this.discountedPrice = subscriptionPlan.getDiscountedPrice();
     }
 }

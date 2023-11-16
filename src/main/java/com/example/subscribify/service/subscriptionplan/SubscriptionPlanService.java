@@ -70,7 +70,7 @@ public class SubscriptionPlanService {
 
         subscriptionPlan.update(updateSubscribeDto.getSubscribeName(), updateSubscribeDto.getDuration(),
                 updateSubscribeDto.getDurationUnit(), updateSubscribeDto.getPrice(), updateSubscribeDto.getDiscount(),
-                updateSubscribeDto.getDiscountType(), updateSubscribeDto.getDiscountedPrice());
+                updateSubscribeDto.getDiscountType());
     }
 
 

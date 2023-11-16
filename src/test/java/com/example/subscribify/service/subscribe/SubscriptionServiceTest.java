@@ -27,24 +27,24 @@ class SubscriptionServiceTest {
     @Autowired
     private SetupTestUtils setupTestUtils;
 
-//    @Test
-//    @DisplayName("구독 서비스 등록 성공 케이스")
-//    void enrollSubscriptionSuccessCase() {
-//        //given
-//        User user = setupTestUtils.createUser();
-//        Application application = setupTestUtils.createApplication(user);
-//        SubscriptionPlan subscriptionPlan = setupTestUtils.createSubscriptionPlan(application);
-//        Customer customer = setupTestUtils.createCustomer(application);
-//        EnrollSubscriptionServiceRequest serviceRequest = new EnrollSubscriptionServiceRequest(customer, subscriptionPlan.getId());
-//
-//        //when
-//        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollSubscribe(serviceRequest, application.getApiKey(), optionProcessor);
-//
-//        // then
-//        Subscription subscription = subscriptionRepository.findById(serviceResponse.getSubscriptionId())
-//                .orElseThrow(() -> new IllegalStateException("Invalid subscription ID: " + serviceResponse.getSubscriptionId()));
-//        assertSubscriptionMatchesPlan(subscription, subscriptionPlan);
-//    }
+    @Test
+    @DisplayName("구독 서비스 등록 성공 케이스")
+    void enrollSubscriptionSuccessCase() {
+        //given
+        User user = setupTestUtils.createUser();
+        Application application = setupTestUtils.createApplication(user);
+        SubscriptionPlan subscriptionPlan = setupTestUtils.createSubscriptionPlan(application);
+        Customer customer = setupTestUtils.createCustomer(application);
+        EnrollSubscriptionServiceRequest serviceRequest = new EnrollSubscriptionServiceRequest(customer, subscriptionPlan.getId());
+
+        //when
+        EnrollSubscriptionServiceResponse serviceResponse = subscriptionService.enrollInSubscription(customer.getCustomerId(), subscriptionPlan.getId(), application.getApiKey());
+
+        // then
+        Subscription subscription = subscriptionRepository.findById(serviceResponse.getSubscriptionId())
+                .orElseThrow(() -> new IllegalStateException("Invalid subscription ID: " + serviceResponse.getSubscriptionId()));
+        assertSubscriptionMatchesPlan(subscription, subscriptionPlan);
+    }
 
 
     @Test
@@ -71,7 +71,6 @@ class SubscriptionServiceTest {
         assertEquals(plan.getPlanName(), subscription.getSubscribeName());
         assertEquals(SubscriptionStatus.PENDING, subscription.getStatus());
         assertEquals(plan.getPrice(), subscription.getPrice());
-        assertEquals(plan.getDiscountedPrice(), subscription.getDiscountedPrice());
     }
 
 }

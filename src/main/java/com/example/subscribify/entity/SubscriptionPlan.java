@@ -19,20 +19,17 @@ public class SubscriptionPlan extends BaseTimeEntity{
     private Long price;
     private DiscountUnit discountType; // Percent, Fixed, None
     private Double discount;
-    private Long discountedPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Application application;
 
-    public void update(String subscribeName, Integer duration, DurationUnit durationUnit, Long price, Double discount, DiscountUnit discountType, Long discountedPrice) {
+    public void update(String subscribeName, Integer duration, DurationUnit durationUnit, Long price, Double discount, DiscountUnit discountType) {
         this.planName = subscribeName;
         this.duration = duration;
         this.durationUnit = durationUnit;
         this.price = price;
         this.discount = discount;
         this.discountType = discountType;
-        assert (discountedPrice.equals(calculateDiscountPrice()));
-        this.discountedPrice = discountedPrice;
     }
 
     private Long calculateDiscountPrice() {

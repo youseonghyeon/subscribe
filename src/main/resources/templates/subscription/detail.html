@@ -25,7 +25,6 @@
                 <strong>가격:</strong> <span th:text="*{price}"></span><br>
                 <strong>할인:</strong> <span th:text="*{discount}"></span><br>
                 <strong>할인 유형:</strong> <span th:text="*{discountType}"></span><br>
-                <strong>할인된 가격:</strong> <span th:text="*{discountedPrice}"></span>
             </p>
             <a th:href="@{/subscription/update/{planId}(planId=*{id})}" class="btn btn-primary mr-2">수정</a>
             <form id="deleteForm" th:action="@{/subscription/delete/{planId}(planId=*{id})}" method="post" style="display: inline;">

@@ -135,8 +135,7 @@ class SubscriptionControllerTest {
                 () -> assertEquals(DurationUnit.YEAR, updatedSubscriptionPlan.getDurationUnit()),
                 () -> assertEquals(90000L, updatedSubscriptionPlan.getPrice()),
                 () -> assertEquals(0D, updatedSubscriptionPlan.getDiscount()),
-                () -> assertEquals(DiscountUnit.NONE, updatedSubscriptionPlan.getDiscountType()),
-                () -> assertEquals(90000L, updatedSubscriptionPlan.getDiscountedPrice()));
+                () -> assertEquals(DiscountUnit.NONE, updatedSubscriptionPlan.getDiscountType()));
     }
 
     @Test

@@ -67,6 +67,9 @@ public class Application {
     }
 
     private Long extractUserId(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new AccessDeniedException("Access is denied");
+        }
         return ((CustomUserDetails) authentication.getPrincipal()).toUser().getId();
     }
 

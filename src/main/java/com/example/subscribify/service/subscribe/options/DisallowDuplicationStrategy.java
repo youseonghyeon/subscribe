@@ -1,40 +1,43 @@
 package com.example.subscribify.service.subscribe.options;
 
+import com.example.subscribify.dto.OptionResult;
 import com.example.subscribify.entity.Customer;
-import com.example.subscribify.entity.Subscription;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.entity.SubscriptionStatus;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
-@Component("disallowDuplicationStrategy")
-public class DisallowDuplicationStrategy implements SubscriptionStrategy {
+@Slf4j
+public class DisallowDuplicationStrategy extends OptionDecorator {
+
+    public DisallowDuplicationStrategy(OptionComponent optionComponent) {
+        super(optionComponent);
+    }
+
+    /**
+     * 주의 :: customer 객체에 연결된 subscription 객체들은 eagerLoading 이 필요함.
+     * TODO (LazyLoading 이 가능 하도록 수정 하거나 해당 메서드를 위해 EagerLoading 을 수행 하도록 변경 해야 함)
+     *
+     * @param customer
+     * @param subscriptionPlan
+     * @return
+     */
     @Override
-    public Subscription apply(Customer customer, SubscriptionPlan subscriptionPlan) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
+    public OptionResult apply(Customer customer, SubscriptionPlan subscriptionPlan) {
+        OptionResult optionResult = optionComponent.apply(customer, subscriptionPlan);
 
-        // 이미 동일한 plan을 구독중이라면, 예외 처리
-        if (customer.getSubscriptions().stream()
-                .anyMatch(subscription ->
-                        subscription.getSubscriptionPlan().equals(subscriptionPlan) &&
-                                subscription.getStatus().equals(SubscriptionStatus.ACTIVE))) {
+        log.info("DisallowDuplicationStrategy.apply() called");
+
+        if (!customer.getSubscriptions().isEmpty() && hasActiveSubscriptionForPlan(customer, subscriptionPlan)) {
             throw new RuntimeException("Customer already has an active subscription.");
         }
 
-        Subscription subscription = Subscription.builder()
-                .subscribeName(subscriptionPlan.getPlanName())
-                .durationMonth(subscriptionPlan.getDuration())
-                .status(SubscriptionStatus.PENDING)
-                .price(subscriptionPlan.getPrice())
-                .discountRate(subscriptionPlan.getDiscount())
-                .discountedPrice(subscriptionPlan.getDiscountedPrice())
-                .customer(customer)
-                .subscriptionPlan(subscriptionPlan)
-                .build();
-        if (subscriptionPlan.getPrice() <= 0) {
-            subscription.activate();
-        }
-        return subscription;
+        return optionResult;
+    }
+
+    private static boolean hasActiveSubscriptionForPlan(Customer customer, SubscriptionPlan subscriptionPlan) {
+        return customer.getSubscriptions().stream()
+                .anyMatch(subscription ->
+                        subscription.getSubscriptionPlan().equals(subscriptionPlan) &&
+                                subscription.getStatus().equals(SubscriptionStatus.ACTIVE));
     }
 }

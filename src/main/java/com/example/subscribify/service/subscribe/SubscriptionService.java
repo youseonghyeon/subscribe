@@ -1,14 +1,15 @@
 package com.example.subscribify.service.subscribe;
 
+import com.example.subscribify.dto.OptionResult;
 import com.example.subscribify.dto.service.EnrollSubscriptionServiceResponse;
 import com.example.subscribify.entity.*;
 import com.example.subscribify.exception.SubscriptionPlanNotFoundException;
 import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.repository.SubscriptionRepository;
 import com.example.subscribify.service.customer.CustomerService;
-import com.example.subscribify.service.subscribe.options.AllowDuplicationStrategy;
-import com.example.subscribify.service.subscribe.options.DisallowDuplicationStrategy;
-import com.example.subscribify.service.subscribe.options.SubscriptionStrategy;
+import com.example.subscribify.service.payment.strategy.DiscountPolicy;
+import com.example.subscribify.service.payment.strategy.DiscountPolicyFactory;
+import com.example.subscribify.service.subscribe.options.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.example.subscribify.entity.DuplicatePaymentOption.DISALLOW_DUPLICATION;
+
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
@@ -27,8 +30,6 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
     private final CustomerService customerService;
-    private final AllowDuplicationStrategy allowDuplicationStrategy;
-    private final DisallowDuplicationStrategy disallowDuplicationStrategy;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -46,11 +47,9 @@ public class SubscriptionService {
     public EnrollSubscriptionServiceResponse enrollInSubscription(String customerId, Long planId, String authorization) {
         SubscriptionPlan subscriptionPlan = validateAndGetSubscriptionPlan(planId);
         verifyAuthorization(subscriptionPlan, authorization);
-
         Customer customer = customerService.getOrCreateCustomer(customerId, subscriptionPlan.getApplication().getId());
-        SubscriptionStrategy strategy = determineSubscriptionStrategy(subscriptionPlan.getApplication());
 
-        Subscription newSubscription = createAndSaveSubscription(customer, subscriptionPlan, strategy);
+        Subscription newSubscription = createAndSaveSubscription(customer, subscriptionPlan);
         return new EnrollSubscriptionServiceResponse(newSubscription.getId());
     }
 
@@ -135,20 +134,59 @@ public class SubscriptionService {
         subscriptionPlan.getApplication().apiKeyCheck(authorization);
     }
 
-    private SubscriptionStrategy determineSubscriptionStrategy(Application application) {
-        // 전략 개수가 많아 지면, List 로 의존성 주입 받는 것 검토
-        return switch (application.getDuplicatePaymentOption()) {
-            case ALLOW_DUPLICATION -> allowDuplicationStrategy;
-            case DISALLOW_DUPLICATION -> disallowDuplicationStrategy;
-        };
+    private OptionComponent determineSubscriptionStrategy(Application application) {
+        OptionComponent component = new ConcreteOptionComponent();
+        component = new OptionDecorator(component);
+        // 중복 옵션 처리
+        if (application.getDuplicatePaymentOption().equals(DISALLOW_DUPLICATION)) {
+            component = new DisallowDuplicationStrategy(component);
+        } else {
+            component = new AllowDuplicationStrategy(component);
+        }
+        // 부가 옵션 처리
+
+        return component;
     }
 
 
+    /**
+     * 구독 서비스 등록
+     *
+     * @param customer
+     * @param subscriptionPlan
+     * @return
+     */
+    private Subscription createAndSaveSubscription(Customer customer, SubscriptionPlan subscriptionPlan) {
+        // 1. 중복 옵션 설정 (전략패턴 + 데코레이터 패턴)
+        Application application = subscriptionPlan.getApplication();
+        // Lazy Loading 임시 코드 (TODO 삭제 필요)
+        List<Subscription> subscriptions = customer.getSubscriptions();
 
-    private Subscription createAndSaveSubscription(Customer customer, SubscriptionPlan subscriptionPlan, SubscriptionStrategy strategy) {
-        Subscription subscription = strategy.apply(customer, subscriptionPlan);
+        OptionComponent subscriptionStrategy = determineSubscriptionStrategy(application);
+        OptionResult optionResult = subscriptionStrategy.apply(customer, subscriptionPlan);
+
+        // 2. 할인 옵션 설정 (전략 패턴)
+        DiscountPolicy discountPolicy = DiscountPolicyFactory.create(subscriptionPlan.getDiscountType());
+        long discountedPrice = discountPolicy.calculateDiscountAmount(subscriptionPlan.getPrice(), subscriptionPlan.getDiscountType(), subscriptionPlan.getDiscount());
+
+        // 3. 객체 생성
+        // optionResult 데이터 사용 예정
+        Subscription subscription = Subscription.builder()
+                .subscribeName(subscriptionPlan.getPlanName())
+                .startDate(null)
+                .endDate(null)
+                .durationMonth(subscriptionPlan.getDuration())
+                .status(SubscriptionStatus.PENDING)
+                .price(subscriptionPlan.getPrice())
+                .discountedPrice(discountedPrice)
+                .customer(customer)
+                .subscriptionPlan(subscriptionPlan)
+                .build();
+
+
         return subscriptionRepository.save(subscription);
     }
+
 
     private Subscription validateAndGetSubscription(Long subscriptionId) {
         return subscriptionRepository.findById(subscriptionId)

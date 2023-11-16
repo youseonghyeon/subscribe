@@ -96,7 +96,6 @@ class SubscriptionPlanServiceTest {
         assertEquals(updateSubscribeDto.getPrice(), subscriptionPlan.getPrice());
         assertEquals(updateSubscribeDto.getDiscount(), subscriptionPlan.getDiscount());
         assertEquals(updateSubscribeDto.getDiscountType(), subscriptionPlan.getDiscountType());
-        assertEquals(updateSubscribeDto.getDiscountedPrice(), subscriptionPlan.getDiscountedPrice());
     }
 
     @Test
@@ -173,8 +172,7 @@ class SubscriptionPlanServiceTest {
                 () -> assertEquals(subscriptionPlan.getDurationUnit(), findPlan.getDurationUnit(), "duration unit should be equal"),
                 () -> assertEquals(subscriptionPlan.getPrice(), findPlan.getPrice(), "price should be equal"),
                 () -> assertEquals(subscriptionPlan.getDiscount(), findPlan.getDiscount(), "discount should be equal"),
-                () -> assertEquals(subscriptionPlan.getDiscountType(), findPlan.getDiscountType(), "discount type should be equal"),
-                () -> assertEquals(subscriptionPlan.getDiscountedPrice(), findPlan.getDiscountedPrice(), "discounted price should be equal")
+                () -> assertEquals(subscriptionPlan.getDiscountType(), findPlan.getDiscountType(), "discount type should be equal")
         );
     }
 

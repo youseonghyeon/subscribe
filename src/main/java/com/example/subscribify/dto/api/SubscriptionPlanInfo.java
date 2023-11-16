@@ -16,7 +16,6 @@ public class SubscriptionPlanInfo {
     private final Long price;
     private final Double discount;
     private final DiscountUnit discountType;
-    private final Long discountedPrice;
 
     public SubscriptionPlanInfo(SubscriptionPlan subscriptionPlan) {
         this.id = subscriptionPlan.getId();
@@ -26,6 +25,5 @@ public class SubscriptionPlanInfo {
         this.price = subscriptionPlan.getPrice();
         this.discount = subscriptionPlan.getDiscount();
         this.discountType = subscriptionPlan.getDiscountType();
-        this.discountedPrice = subscriptionPlan.getDiscountedPrice();
     }
 }

@@ -7,6 +7,7 @@ import com.example.subscribify.entity.DuplicatePaymentOption;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.repository.ApplicationRepository;
+import com.example.subscribify.util.SecurityTestUtils;
 import com.example.subscribify.util.SetupTestUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
@@ -56,10 +58,12 @@ class ApplicationServiceTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("Application 조회 성공 테스트")
     void getApplicationSuccessCase() {
         User user1 = setupTestUtils.createUser("user1");
         Application application = setupTestUtils.createApplication(user1);
+        SecurityTestUtils.mockLogin(user1);
 
         //when
         applicationService.getApplication(application.getId(), user1);
@@ -96,6 +100,7 @@ class ApplicationServiceTest {
         User user = setupTestUtils.createUser();
         Application application = setupTestUtils.createApplication(user);
         SubscriptionPlan subscriptionPlan = setupTestUtils.createSubscriptionPlan(application);
+        SecurityTestUtils.mockLogin(user);
         em.flush();
         em.clear();
 
@@ -112,6 +117,7 @@ class ApplicationServiceTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("api 키 재설정")
     void updateKeysTest() {
         //given
@@ -119,6 +125,8 @@ class ApplicationServiceTest {
         Application application = setupTestUtils.createApplication(user);
         String apiKey = application.getApiKey();
         String secretKey = application.getSecretKey();
+
+        SecurityTestUtils.mockLogin(user);
         //when
         applicationService.updateKeys(application.getId(), user);
         em.flush();

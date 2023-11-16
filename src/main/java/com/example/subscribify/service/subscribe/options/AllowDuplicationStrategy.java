@@ -1,32 +1,24 @@
 package com.example.subscribify.service.subscribe.options;
 
+import com.example.subscribify.dto.OptionResult;
 import com.example.subscribify.entity.Customer;
-import com.example.subscribify.entity.Subscription;
 import com.example.subscribify.entity.SubscriptionPlan;
-import com.example.subscribify.entity.SubscriptionStatus;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
-@Component("allowDuplicationStrategy")
-public class AllowDuplicationStrategy implements SubscriptionStrategy {
-    @Override
-    public Subscription apply(Customer customer, SubscriptionPlan subscriptionPlan) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
-        Subscription subscription = Subscription.builder()
-                .subscribeName(subscriptionPlan.getPlanName())
-                .durationMonth(subscriptionPlan.getDuration())
-                .status(SubscriptionStatus.PENDING)
-                .price(subscriptionPlan.getPrice())
-                .discountRate(subscriptionPlan.getDiscount())
-                .discountedPrice(subscriptionPlan.getDiscountedPrice())
-                .customer(customer)
-                .subscriptionPlan(subscriptionPlan)
-                .build();
-        if (subscriptionPlan.getPrice() == 0) {
-            subscription.activate();
-        }
-        return subscription;
+@Slf4j
+public class AllowDuplicationStrategy extends OptionDecorator {
+
+    public AllowDuplicationStrategy(OptionComponent optionComponent) {
+        super(optionComponent);
     }
 
+    @Override
+    public OptionResult apply(Customer customer, SubscriptionPlan subscriptionPlan) {
+        OptionResult optionResult = optionComponent.apply(customer, subscriptionPlan);
+
+        // 부가 기능 위치
+        log.info("AllowDuplicationStrategy.apply() called");
+
+        return optionResult;
+    }
 }

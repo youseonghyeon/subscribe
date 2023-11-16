@@ -4,9 +4,13 @@ import com.example.subscribify.entity.*;
 import com.example.subscribify.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Random;
 
 @TestComponent
@@ -28,6 +32,7 @@ public final class SetupTestUtils {
     public User createUser() {
         return this.createUser("testUser");
     }
+
     public User createUser(String username) {
         long randomId = new Random().nextLong();
         return userRepository.save(User.builder()
@@ -46,6 +51,7 @@ public final class SetupTestUtils {
                 .name("testApplication")
                 .apiKey("testApiKey")
                 .secretKey("testSecretKey")
+                .duplicatePaymentOption(DuplicatePaymentOption.DISALLOW_DUPLICATION)
                 .user(user)
                 .build());
     }
@@ -60,7 +66,6 @@ public final class SetupTestUtils {
                 .price(1000L)
                 .discount(0.1)
                 .discountType(DiscountUnit.PERCENT)
-                .discountedPrice(900L)
                 .application(application)
                 .build());
     }
@@ -71,6 +76,7 @@ public final class SetupTestUtils {
                 .id(randomId)
                 .customerId("testCustomerId")
                 .applicationId(application.getId())
+                .subscriptions(new ArrayList<>())
                 .build();
         return customerRepository.save(customer);
     }
@@ -86,7 +92,6 @@ public final class SetupTestUtils {
                 .status(SubscriptionStatus.PENDING)
                 .price(plan.getPrice())
                 .discountRate(plan.getDiscount())
-                .discountedPrice(plan.getDiscountedPrice())
                 .customer(customer)
                 .subscriptionPlan(plan)
                 .build());
