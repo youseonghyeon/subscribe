@@ -61,4 +61,8 @@ public class User extends BaseTimeEntity {
     public void delete() {
         // TODO Soft Delete 로직 만들어야 함
     }
+
+    public boolean isAdmin() {
+        return false;
+    }
 }

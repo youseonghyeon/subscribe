@@ -134,21 +134,6 @@ public class SubscriptionService {
         subscriptionPlan.getApplication().apiKeyCheck(authorization);
     }
 
-    private OptionComponent determineSubscriptionStrategy(Application application) {
-        OptionComponent component = new ConcreteOptionComponent();
-        component = new OptionDecorator(component);
-        // 중복 옵션 처리
-        if (application.getDuplicatePaymentOption().equals(DISALLOW_DUPLICATION)) {
-            component = new DisallowDuplicationStrategy(component);
-        } else {
-            component = new AllowDuplicationStrategy(component);
-        }
-        // 부가 옵션 처리
-
-        return component;
-    }
-
-
     /**
      * 구독 서비스 등록
      *
@@ -157,21 +142,30 @@ public class SubscriptionService {
      * @return
      */
     private Subscription createAndSaveSubscription(Customer customer, SubscriptionPlan subscriptionPlan) {
-        // 1. 중복 옵션 설정 (전략패턴 + 데코레이터 패턴)
         Application application = subscriptionPlan.getApplication();
-        // Lazy Loading 임시 코드 (TODO 삭제 필요)
+        // TODO Lazy Loading 을 위한 임시 코드
+        // TODO Eager Loading 을 고려중
         List<Subscription> subscriptions = customer.getSubscriptions();
 
         OptionComponent subscriptionStrategy = determineSubscriptionStrategy(application);
+        // TODO 현재는 optionResult의 결과값이 없음. 추후 추가 예정
         OptionResult optionResult = subscriptionStrategy.apply(customer, subscriptionPlan);
 
-        // 2. 할인 옵션 설정 (전략 패턴)
-        DiscountPolicy discountPolicy = DiscountPolicyFactory.createPolicy(subscriptionPlan.getDiscountType());
-        long discountedPrice = discountPolicy.calculateDiscountedAmount(subscriptionPlan.getPrice(), subscriptionPlan.getDiscount());
+        long discountedPrice = getDiscountedPrice(subscriptionPlan);
 
+        Subscription subscription = createSubscription(customer, subscriptionPlan, discountedPrice, optionResult);
+        return subscriptionRepository.save(subscription);
+    }
+
+    private static long getDiscountedPrice(SubscriptionPlan subscriptionPlan) {
+        DiscountPolicy discountPolicy = DiscountPolicyFactory.createPolicy(subscriptionPlan.getDiscountType());
+        return discountPolicy.calculateDiscountedAmount(subscriptionPlan.getPrice(), subscriptionPlan.getDiscount());
+    }
+
+    private static Subscription createSubscription(Customer customer, SubscriptionPlan subscriptionPlan, long discountedPrice, OptionResult optionResult) {
         // 3. 객체 생성
         // optionResult 데이터 사용 예정
-        Subscription subscription = Subscription.builder()
+        return Subscription.builder()
                 .subscribeName(subscriptionPlan.getPlanName())
                 .startDate(null)
                 .endDate(null)
@@ -182,9 +176,19 @@ public class SubscriptionService {
                 .customer(customer)
                 .subscriptionPlan(subscriptionPlan)
                 .build();
+    }
 
-
-        return subscriptionRepository.save(subscription);
+    private OptionComponent determineSubscriptionStrategy(Application application) {
+        OptionComponent component = new ConcreteOptionComponent();
+        component = new OptionDecorator(component);
+        if (application.getDuplicatePaymentOption().equals(DISALLOW_DUPLICATION)) {
+            component = new DisallowDuplicationStrategy(component);
+        } else {
+            component = new AllowDuplicationStrategy(component);
+        }
+        // 부가 옵션 처리
+        // ...
+        return component;
     }
 
 

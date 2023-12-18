@@ -4,6 +4,10 @@
 
 또한, 저희 플랫폼은 SaaS(Software as a Service) 모델로 제공되며, 사업자 및 고객사를 대상으로 하는 구독 관리 및 결제 솔루션을 제공합니다. 사업자는 이 플랫폼을 통해 자사의 구독 서비스를 효율적으로 운영하고 관리할 수 있습니다.
 
+## 아키텍처 설계
+![img.png](img.png)
+(api test page를 gateway에 추가할지 검토중.)
+
 ## DB Table Diagram
 
 <img width="416" alt="diagram" src="https://github.com/youseonghyeon/subscribfy/assets/78669797/a99a68ae-45ee-4b08-88dd-c417d4e23119">
@@ -30,13 +34,3 @@
 **결과:**
 - 구독 옵션 처리 로직을 모듈화하여 유지보수성과 코드 확장성을 개선했습니다.
 - 각 구독 옵션을 독립적으로 관리하며, 새로운 옵션 추가나 기존 옵션 수정이 용이한 유연한 시스템을 구축했습니다.
-
-### 2. fat service 레이어
-
-
-**어려웠던 부분:**
-- 서비스(service) 레이어에 비즈니스 로직이 집중되어 있었습니다.
-
-**해결방안:**
-- 필수 검증 로직은 서비스(service) 및 일부 도메인(domain) 레이어에 배치하고, 기본 검증 로직은 Controller에 ArgumentResolver 를 활용해 배치했습니다.
-- 역할에 따라 레이어를 분리하여 코드를 깔끔하게 구성하였습니다.

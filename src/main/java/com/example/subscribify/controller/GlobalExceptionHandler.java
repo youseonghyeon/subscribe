@@ -40,4 +40,5 @@ public class GlobalExceptionHandler {
         // 일단 인증 정보를 가리기 위해 404 Not Found 로 대체 - 필요시 403으로 변경
         return "exception/not-found";
     }
+
 }

@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 </head>
+
 <body>
 <div th:fragment="header">
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
         <a class="navbar-brand" th:href="@{/}">Subscribe</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -26,17 +28,47 @@
             </ul>
 
             <ul class="navbar-nav ml-auto">
+
+
+
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/login}">Login</a>
+                    <span class="nav-link" id="userName"></span>
                 </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post" style="">
+
+
+                <li class="nav-item" id="loginButton">
+                    <form th:action="@{/login}" method="get">
+                        <button type="submit" class="btn btn-link nav-link" style="padding: 0;">Login</button>
+                    </form>
+                </li>
+                <!-- 로그인 상태일 때 : 로그아웃 버튼 보이게 -->
+                <li class="nav-item" id="logoutButton">
+                    <form th:action="@{/logout}" method="post">
                         <button type="submit" class="btn btn-link nav-link" style="padding: 0;">Logout</button>
                     </form>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" id="signupButton">
                     <a class="nav-link" th:href="@{/signup}">Sign Up</a>
                 </li>
+<!--                spring security extra 가 적용이 안되어... get방식으로 인증/인가 처리 -->
+                <script>
+                    window.addEventListener("load", function () {
+                        $.ajax({
+                            url: '/isAuthenticated',
+                            type: 'GET',
+                            success: function (response) {
+                                if (response == null || response === "") {
+                                    $("#loginButton, #signupButton").show();
+                                    $("#logoutButton").hide();
+                                } else {
+                                    $("#userName").text(response);
+                                    $("#logoutButton").show();
+                                    $("#loginButton, #signupButton").hide();
+                                }
+                            }
+                        });
+                    })
+                </script>
             </ul>
 
         </div>
@@ -74,6 +106,8 @@
             text-decoration: none;
         }
     </style>
+
 </div>
+
 </body>
 </html>

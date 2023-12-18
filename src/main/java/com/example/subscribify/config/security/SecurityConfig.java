@@ -1,6 +1,5 @@
 package com.example.subscribify.config.security;
 
-import com.example.subscribify.config.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +25,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/", "/signup", "/docs/**", "/api/**", "/template/**").permitAll()
+                .requestMatchers("/login", "/", "/signup", "/docs/**", "/api/**", "/template/**", "/isAuthenticated").permitAll()
                 .anyRequest().authenticated());
 
         http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer
@@ -40,7 +39,6 @@ public class SecurityConfig {
                 .failureUrl("/login?error=true")
                 .usernameParameter("username")
                 .passwordParameter("password"));
-
 
 
 //        http.logout(httpSecurityLogoutConfigurer -> {
