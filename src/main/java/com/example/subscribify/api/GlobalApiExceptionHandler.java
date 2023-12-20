@@ -1,4 +1,4 @@
-package com.example.subscribify.controller;
+package com.example.subscribify.api;
 
 import com.example.subscribify.exception.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Slf4j
-@ControllerAdvice(basePackages = "com.example.subscribify.controller")
-public class GlobalExceptionHandler {
+@ControllerAdvice(basePackages = "com.example.subscribify.api")
+public class GlobalApiExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -23,22 +23,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e) {
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("IllegalArgumentException: {}", e.getMessage());
-        return "exception/access-denied";
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public String handleNoSuchElementException(NoSuchElementException e) {
+    public ResponseEntity<Map<String, String>> handleNoSuchElementException(NoSuchElementException e) {
         log.error("NoSuchElementException: {}", e.getMessage());
-        return "exception/not-found";
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public String handleAccessDeniedException(AccessDeniedException e) {
+    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException e) {
         log.error("AccessDeniedException: {}", e.getMessage());
         // 일단 인증 정보를 가리기 위해 404 Not Found 로 대체 - 필요시 403으로 변경
-        return "exception/not-found";
+        return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
     }
 
 }

@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
@@ -198,7 +199,8 @@ class SubscriptionPlanServiceTest {
 
 
     private void login(User user) {
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
+        SimpleGrantedAuthority roleUser = new SimpleGrantedAuthority("ROLE_USER");
+        CustomUserDetails customUserDetails = new CustomUserDetails(user, List.of(roleUser));
         Authentication auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }

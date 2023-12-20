@@ -2,13 +2,9 @@ package com.example.subscribify.config.security;
 
 import com.example.subscribify.entity.User;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Spring Security에서 사용자의 정보를 담는 인터페이스
@@ -16,26 +12,28 @@ import java.util.List;
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
+    private final Collection<? extends GrantedAuthority> authorities;
+
+
+    // 단순한 구조의 User 객체를 사용할 경우(리소스 최적화를 위함)
+//    private final SimpleUser simpleUser;
 
     public User toUser() {
         return user;
     }
 
-    public CustomUserDetails(User user) {
+    public Collection<? extends GrantedAuthority> getGrantedAuthorities() {
+        return authorities;
+    }
+
+
+    public CustomUserDetails(User user, Collection<? extends GrantedAuthority> authorities) {
         this.user = user;
+        this.authorities = authorities;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-
-        // 예제: 각 사용자는 "USER" 권한을 가지고, admin 속성이 true인 사용자는 "ADMIN" 권한도 가진다고 가정
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-        if (user.isAdmin()) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }
-
         return authorities;
     }
 

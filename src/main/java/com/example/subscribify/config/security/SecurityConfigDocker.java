@@ -11,17 +11,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@Profile("default")
+@Profile("docker")
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfigDocker {
 
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -49,11 +46,11 @@ public class SecurityConfig {
                 .ignoringRequestMatchers(new AntPathRequestMatcher("/api/**")));
 
         http.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
-                .loginPage("/login")
+                .loginPage("http://www.sideproject.site/login")
                 .loginProcessingUrl("/login")
                 .permitAll()
-                .defaultSuccessUrl("/", false)
-                .failureUrl("/login?error=true")
+                .defaultSuccessUrl("http://www.sideproject.site/", true)
+                .failureUrl("http://www.sideproject.site/login?error=true")
                 .usernameParameter("username")
                 .passwordParameter("password"));
 
