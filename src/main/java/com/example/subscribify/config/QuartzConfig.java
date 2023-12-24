@@ -1,7 +1,5 @@
 package com.example.subscribify.config;
 
-import org.quartz.JobDetail;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**

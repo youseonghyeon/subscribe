@@ -2,7 +2,10 @@ package com.example.subscribify.dto.controller;
 
 import com.example.subscribify.entity.DiscountUnit;
 import com.example.subscribify.entity.DurationUnit;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor

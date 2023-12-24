@@ -3,7 +3,6 @@ package com.example.subscribify.controller;
 import com.example.subscribify.dto.controller.CreateSubscribeDto;
 import com.example.subscribify.dto.controller.UpdateSubscribeDto;
 import com.example.subscribify.entity.*;
-import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.service.application.ApplicationService;
 import com.example.subscribify.service.subscribe.SubscriptionService;
 import com.example.subscribify.service.subscriptionplan.SubscriptionPlanService;
