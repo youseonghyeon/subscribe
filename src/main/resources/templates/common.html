@@ -37,20 +37,27 @@
 
 
                 <li class="nav-item" id="loginButton">
-                    <form th:action="@{/login}" method="get">
-                        <button type="submit" class="btn btn-link nav-link" style="padding: 0;">Login</button>
+                    <form th:action="@{/login}" method="get" class="btn btn-link nav-link">
+                        <button type="submit" class="btn btn-link" style="padding: 0;">Login</button>
                     </form>
                 </li>
-                <!-- 로그인 상태일 때 : 로그아웃 버튼 보이게 -->
+
+
+
                 <li class="nav-item" id="logoutButton">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="btn btn-link nav-link" style="padding: 0;">Logout</button>
+                    <form th:action="@{/logout}" method="post" class="btn btn-link nav-link">
+                        <button type="submit" class="btn btn-link" style="padding: 0;">Logout</button>
                     </form>
                 </li>
+
+
                 <li class="nav-item" id="signupButton">
                     <a class="nav-link" th:href="@{/signup}">Sign Up</a>
                 </li>
-<!--                spring security extra 가 적용이 안되어... get방식으로 인증/인가 처리 -->
+
+
+
+<!--                spring security extra 가 적용이 안되어... get방식으로 임시 인가 처리 -->
                 <script>
                     window.addEventListener("load", function () {
                         $.ajax({
@@ -69,6 +76,8 @@
                         });
                     })
                 </script>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
             </ul>
 
         </div>

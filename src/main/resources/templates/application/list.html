@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css}">
 
 <head th:replace="~{layout:: globalHead}">
     <title>구독 서비스 조회</title>
@@ -29,6 +30,25 @@
             </div>
         </a>
     </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${applications.first ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/applications(page=${applications.number - 1}, size=${applications.size})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, applications.totalPages - 1)}"
+                th:classappend="${pageNumber == applications.number ? 'active' : ''}">
+                <a class="page-link" th:href="@{/applications(page=${pageNumber}, size=${applications.size})}" th:text="${pageNumber + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${applications.last ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/applications(page=${applications.number + 1}, size=${applications.size})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
 </div>
 

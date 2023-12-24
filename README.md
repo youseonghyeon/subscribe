@@ -38,7 +38,7 @@ Subscribe를 통해 사업체는 자체 구독 서비스를 효과적으로 관�
 ### 1. Security 로그인 처리시 redirect 문제
 
 **어려웠던 부분:**
-- 도전: Spring Security를 이용한 로그인/로그아웃 시 Gateway를 벗어나 서비스로 리다이렉트되는 문제.
+- 도전: Spring Security를 이용한 로그인/로그아웃 시 gateway가 아닌 was로 redirect되는 문제.
 
 **해결 전략:**
 - 해결: 임시로 spring security에서 defaultSuccessUrl을 gateway로 이동하도록 설정하였습니다. 시간이 허락하면 gateway에서 security를 관리하고 서비스로 사용자 정보를 전달하는 방식으로 변경할 예정입니다.

@@ -10,6 +10,9 @@ import com.example.subscribify.service.application.ApplicationService;
 import com.example.subscribify.service.payment.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -30,8 +32,10 @@ public class ApplicationController {
     private final PaymentService paymentService;
 
     @GetMapping("/applications")
-    public String applicationListForm(@AuthUser User user, Model model) {
-        List<Application> applications = applicationService.findApplicationsByUserId(user.getId());
+    public String applicationListForm(@AuthUser User user, Model model, @PageableDefault(size = 10) Pageable pageable) {
+//        List<Application> applications = applicationService.findApplicationsByUserId(user.getId());
+        Page<Application> applications = applicationService.findApplicationsByUserId(user.getId(), pageable);
+
         model.addAttribute("applications", applications);
         return "application/list";
     }

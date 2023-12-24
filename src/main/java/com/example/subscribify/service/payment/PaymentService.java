@@ -9,6 +9,8 @@ import com.example.subscribify.repository.SubscriptionPlanRepository;
 import com.example.subscribify.service.payment.discountstrategy.DiscountPolicy;
 import com.example.subscribify.service.payment.discountstrategy.DiscountPolicyFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -86,8 +88,8 @@ public class PaymentService {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public List<Payment> getPaymentLog(Long subscriptionPlanId) {
-        return paymentRepository.findAllByApplicationId(subscriptionPlanId);
+    public Page<Payment> getPaymentLog(Long subscriptionPlanId, Pageable pageable) {
+        return paymentRepository.findAllByApplicationId(subscriptionPlanId, pageable);
     }
 
     public Long sumAmountByApplicationId(Long applicationId) {

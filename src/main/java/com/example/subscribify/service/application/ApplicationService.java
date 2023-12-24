@@ -4,6 +4,7 @@ import com.example.subscribify.config.security.ApiKeyGenerator;
 import com.example.subscribify.dto.UpdateApplicationDto;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
+import com.example.subscribify.entity.DuplicatePaymentOption;
 import com.example.subscribify.entity.Subscription;
 import com.example.subscribify.entity.User;
 import com.example.subscribify.exception.ApplicationNotFoundException;
@@ -11,12 +12,13 @@ import com.example.subscribify.repository.ApplicationRepository;
 import com.example.subscribify.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -33,6 +35,7 @@ public class ApplicationService {
                 .name(createApplicationDto.getName())
                 .apiKey(ApiKeyGenerator.generateApiKey(32))
                 .secretKey(ApiKeyGenerator.generateApiKey(32))
+                .duplicatePaymentOption(DuplicatePaymentOption.DISALLOW_DUPLICATION)
                 .user(user)
                 .build();
         applicationRepository.save(application);
@@ -94,6 +97,9 @@ public class ApplicationService {
 
     public List<Application> findApplicationsByUserId(Long userId) {
         return applicationRepository.findByUserId(userId);
+    }
+    public Page<Application> findApplicationsByUserId(Long userId, Pageable pageable) {
+        return applicationRepository.findByUserId(userId, pageable);
     }
 
 

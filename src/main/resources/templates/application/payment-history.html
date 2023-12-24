@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css}">
 
 <head th:replace="~{layout:: globalHead}">
     <title>구독 서비스 조회</title>
@@ -29,6 +30,26 @@
     <div th:if="${payments.isEmpty()}" class="text-center my-4">
         <p>결제 정보가 없습니다.</p>
     </div>
+
+    <nav th:if="${!payments.isEmpty()}" aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${payments.first ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{?page=${payments.number - 1}}">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="item : ${#numbers.sequence(0, payments.totalPages - 1)}"
+                th:classappend="${item == payments.number ? 'active' : ''}">
+                <a class="page-link" th:href="@{?page=${item}}" th:text="${item + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${payments.last ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{?page=${payments.number + 1}}">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
 </div>
 </body>
 

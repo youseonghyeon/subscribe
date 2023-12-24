@@ -11,13 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@Profile("default")
+@Profile({"default", "test"})
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
