@@ -47,6 +47,7 @@ public class SubscriptionService {
     public EnrollSubscriptionServiceResponse enrollInSubscription(String customerId, Long planId, String authorization) {
         SubscriptionPlan subscriptionPlan = validateAndGetSubscriptionPlan(planId);
         verifyAuthorization(subscriptionPlan, authorization);
+
         Customer customer = customerService.getOrCreateCustomer(customerId, subscriptionPlan.getApplication().getId());
 
         Subscription newSubscription = createAndSaveSubscription(customer, subscriptionPlan);

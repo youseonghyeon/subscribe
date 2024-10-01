@@ -3,8 +3,6 @@ package com.example.subscribify.api.template;
 import com.example.subscribify.entity.Application;
 import com.example.subscribify.entity.SubscriptionPlan;
 import com.example.subscribify.repository.ApplicationRepository;
-import com.example.subscribify.repository.SubscriptionPlanRepository;
-import com.example.subscribify.service.application.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SubscriptionProcessor {
 
-    private final ApplicationService applicationService;
     private final ApplicationRepository applicationRepository;
-    private final SubscriptionPlanRepository subscriptionPlanRepository;
 
     @GetMapping("/subscriptions/{applicationId}")
     public String subscriptionListForm(@PathVariable Long applicationId, Model model) {

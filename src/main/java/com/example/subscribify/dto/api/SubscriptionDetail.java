@@ -16,19 +16,6 @@ public class SubscriptionDetail {
     private SubscriptionStatus status;
     private Long price;
 
-    /**
-     * EXAMPLE
-     *     {
-     *         "id": 55,
-     *         "subscribeName": "카카오톡 서랍장",
-     *         "startDate": null,
-     *         "endDate": null,
-     *         "durationMonth": 6,
-     *         "status": "PENDING",
-     *         "price": 49000
-     *     },
-     * @param subscription
-     */
 
     public SubscriptionDetail(Subscription subscription) {
         this.id = subscription.getId();

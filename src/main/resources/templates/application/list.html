@@ -11,7 +11,30 @@
 <div th:replace="~{common :: header}"></div>
 
 <div class="container mt-5">
-    <h1 class="text-center mb-5">Application List</h1>
+
+    <!-- Dashboard Section -->
+    <h2 class="text-center mb-5">Dashboard</h2>
+
+    <!-- Total payment amount -->
+    <div class="mb-3">
+        <p>개발 진행중..</p>
+        <h3 class="card-title">총 매출</h3>
+        <p class="card-text" th:text="${totalPayment}">0</p>
+    </div>
+
+    <!-- Payment statuses -->
+    <div class="mb-3">
+        <h3 class="card-title">Payment Status:</h3>
+        <div>
+            <p class="card-text">결제 완료: <span th:text="${paymentCompleted}">00</span></p>
+            <p class="card-text">결제 대기: <span th:text="${paymentPending}">0</span></p>
+        </div>
+    </div>
+
+    <!-- divider -->
+    <hr/>
+
+    <h2 class="text-center mb-5">Application List</h2>
 
     <!-- Add new application card -->
     <div class="card mb-3">
@@ -34,16 +57,21 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li class="page-item" th:classappend="${applications.first ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/applications(page=${applications.number - 1}, size=${applications.size})}" aria-label="Previous">
+                <a class="page-link"
+                   th:href="@{/applications(page=${applications.number - 1}, size=${applications.size})}"
+                   aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, applications.totalPages - 1)}"
                 th:classappend="${pageNumber == applications.number ? 'active' : ''}">
-                <a class="page-link" th:href="@{/applications(page=${pageNumber}, size=${applications.size})}" th:text="${pageNumber + 1}"></a>
+                <a class="page-link" th:href="@{/applications(page=${pageNumber}, size=${applications.size})}"
+                   th:text="${pageNumber + 1}"></a>
             </li>
             <li class="page-item" th:classappend="${applications.last ? 'disabled' : ''}">
-                <a class="page-link" th:href="@{/applications(page=${applications.number + 1}, size=${applications.size})}" aria-label="Next">
+                <a class="page-link"
+                   th:href="@{/applications(page=${applications.number + 1}, size=${applications.size})}"
+                   aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

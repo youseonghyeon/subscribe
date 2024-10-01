@@ -1,6 +1,6 @@
 package com.example.subscribify.controller;
 
-import com.example.subscribify.domain.AuthUser;
+import com.example.subscribify.domain.SessionUser;
 import com.example.subscribify.dto.UpdateApplicationDto;
 import com.example.subscribify.dto.controller.CreateApplicationDto;
 import com.example.subscribify.entity.Application;
@@ -32,10 +32,12 @@ public class ApplicationController {
     private final PaymentService paymentService;
 
     @GetMapping("/applications")
-    public String applicationListForm(@AuthUser User user, Model model, @PageableDefault(size = 10) Pageable pageable) {
+    public String applicationListForm(@SessionUser User user, Model model, @PageableDefault(size = 10) Pageable pageable) {
 //        List<Application> applications = applicationService.findApplicationsByUserId(user.getId());
         Page<Application> applications = applicationService.findApplicationsByUserId(user.getId(), pageable);
-
+        model.addAttribute("totalPayment", 0);
+        model.addAttribute("paymentCompleted", 0);
+        model.addAttribute("paymentPending", 0);
         model.addAttribute("applications", applications);
         return "application/list";
     }
@@ -78,7 +80,7 @@ public class ApplicationController {
     }
 
     @PostMapping("/applications/enroll")
-    public String enrollApplication(@ModelAttribute @Validated CreateApplicationDto createApplicationDto, @AuthUser User user) {
+    public String enrollApplication(@ModelAttribute @Validated CreateApplicationDto createApplicationDto, @SessionUser User user) {
         applicationService.createApplication(createApplicationDto, user);
         return "redirect:/applications";
     }

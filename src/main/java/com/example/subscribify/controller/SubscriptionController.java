@@ -115,7 +115,7 @@ public class SubscriptionController {
      * @param planId             수정할 구독의 ID
      * @return 업데이트 된 구독의 상세 페이지 경로
      */
-    @PostMapping("subscription/update/{planId}")
+    @PostMapping("/subscription/update/{planId}")
     public String subscriptionUpdate(@ModelAttribute UpdateSubscribeDto updateSubscribeDto, @PathVariable Long planId) {
         log.info("updateSubscribeDto={}", updateSubscribeDto);
         subscriptionPlanService.updateSubscribePlan(planId, updateSubscribeDto);
@@ -127,10 +127,10 @@ public class SubscriptionController {
      *
      * @return
      */
-    @PostMapping("subscription/delete/{planId}")
+    @PostMapping("/subscription/delete/{planId}")
     public String subscriptionDelete(@PathVariable Long planId) {
         subscriptionPlanService.deleteSubscribePlan(planId);
-        return "redirect:/";
+        return "redirect:/applications";
     }
 
 

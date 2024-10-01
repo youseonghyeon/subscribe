@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout:: globalHead}">
+    <title>마이페이지</title>
+</head>
+
+<body>
+<div th:replace="~{common::header}"></div>
+
+<div class="container mt-5" th:object="${user}">
+    <h1 class="mb-5">My Page</h1>
+
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" value="User's username" th:value="*{username}" disabled>
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="email" value="User's email" th:value="*{email}">
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" th:value="*{password}">
+    </div>
+
+    <div>개발 진행중</div>
+    <div>개발 진행중</div>
+
+
+
+    <button class="btn btn-primary" onclick="updateProfile()">Update profile</button>
+</div>
+
+<script type="text/javascript">
+    function updateProfile() {
+        const email = document.getElementById('email').value;
+        const newPassword = document.getElementById('password').value;
+        const confirmedPassword = document.getElementById('password-confirm').value;
+
+        if (newPassword !== '' && newPassword !== confirmedPassword) {
+            alert('Passwords does not match');
+            return;
+        }
+
+        // Here, send the request to the corresponding backend function to update the user profile
+
+    }
+</script>
+</body>
+</html>

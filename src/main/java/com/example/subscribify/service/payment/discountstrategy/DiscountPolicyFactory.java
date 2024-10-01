@@ -8,6 +8,7 @@ public class DiscountPolicyFactory {
             case PERCENT -> new PercentDiscountPolicy();
             case FIXED -> new FixedDiscountPolicy();
             case NONE -> new NoDiscountPolicy();
+            default -> throw new IllegalArgumentException("Invalid discount type");
         };
     }
 }

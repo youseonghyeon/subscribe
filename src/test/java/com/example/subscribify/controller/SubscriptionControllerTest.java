@@ -153,7 +153,7 @@ class SubscriptionControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/applications"));
 
         //then
         boolean existSubscriptionPlans = subscriptionPlanRepository.findById(subscriptionPlan.getId()).isPresent();

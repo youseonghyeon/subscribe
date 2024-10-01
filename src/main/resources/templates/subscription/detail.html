@@ -79,24 +79,20 @@
     }
 
     function submitFormWithAjax() {
-        var xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
         xhr.open('POST', document.getElementById('deleteForm').action, true);
 
-        xhr.onload = function() {
-            if (this.status === 400) {
-                let jsonResponse = JSON.parse(this.responseText);
-                alert(jsonResponse.message)
-            } else if (this.status >= 200 && this.status < 400) {
-                // 성공적인 응답 처리 (예: 페이지 새로고침 또는 특정 페이지로 리다이렉트)
-                location.reload();
-            } else {
-                // 다른 에러 처리
-                alert('오류가 발생했습니다. 다시 시도하세요.');
+        xhr.onreadystatechange = function() {
+            if (this.readyState === 4) { // done
+                if (this.status === 200) { // complete
+                    window.location.href = this.responseURL;
+                } else if (this.status === 400) {
+                    let jsonResponse = JSON.parse(this.responseText);
+                    alert(jsonResponse.message);
+                } else {
+                    alert('오류가 발생했습니다. 다시 시도하세요.');
+                }
             }
-        };
-
-        xhr.onerror = function() {
-            alert('요청 중 오류가 발생했습니다. 다시 시도하세요.');
         };
 
         xhr.send(new FormData(document.getElementById('deleteForm')));

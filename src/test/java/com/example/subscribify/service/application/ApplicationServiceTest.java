@@ -62,7 +62,6 @@ class ApplicationServiceTest {
         User user1 = setupTestUtils.createUser("user1");
         Application application = setupTestUtils.createApplication(user1);
         SecurityTestUtils.mockLogin(user1);
-
         //when
         applicationService.findApplicationByIdWithAuth(application.getId());
 

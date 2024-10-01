@@ -92,7 +92,7 @@ public class ApplicationService {
 
     public Application findApplicationByApiKey(String apiKey) {
         return applicationRepository.findByApiKey(apiKey)
-                .orElseThrow(() -> new ApplicationNotFoundException(null));
+                .orElseThrow(() -> new ApplicationNotFoundException());
     }
 
     public List<Application> findApplicationsByUserId(Long userId) {

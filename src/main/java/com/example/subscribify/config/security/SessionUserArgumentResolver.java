@@ -1,6 +1,6 @@
 package com.example.subscribify.config.security;
 
-import com.example.subscribify.domain.AuthUser;
+import com.example.subscribify.domain.SessionUser;
 import com.example.subscribify.entity.User;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -11,7 +11,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-public class SecurityArgumentResolver implements HandlerMethodArgumentResolver {
+public class SessionUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     /**
      * SessionUser 어노테이션이 붙어있고, User 타입인 경우에만 resolveArgument 를 사용한다.
@@ -21,7 +21,7 @@ public class SecurityArgumentResolver implements HandlerMethodArgumentResolver {
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(AuthUser.class) && parameter.getGenericParameterType().equals(User.class);
+        return parameter.hasParameterAnnotation(SessionUser.class) && parameter.getGenericParameterType().equals(User.class);
     }
 
     /**

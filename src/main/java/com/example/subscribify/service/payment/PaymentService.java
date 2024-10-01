@@ -21,9 +21,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
-    private final PgService pgService;
 
-    // TODO 미완. 로직 설계를 더 해야 함
     public void pay(String uerId, Long applicationId, Long productId, Long amount, PaymentStatus status) {
         // 결제 로직 위치
 

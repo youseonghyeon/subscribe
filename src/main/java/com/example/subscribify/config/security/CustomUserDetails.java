@@ -6,9 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-/**
- * Spring Security에서 사용자의 정보를 담는 인터페이스
- */
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
@@ -21,11 +18,6 @@ public class CustomUserDetails implements UserDetails {
     public User toUser() {
         return user;
     }
-
-    public Collection<? extends GrantedAuthority> getGrantedAuthorities() {
-        return authorities;
-    }
-
 
     public CustomUserDetails(User user, Collection<? extends GrantedAuthority> authorities) {
         this.user = user;
